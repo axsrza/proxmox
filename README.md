@@ -2,7 +2,9 @@
 
 # Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM
 lvremove /dev/pve/data
+
 lvresize -l +100%FREE /dev/pve/root
+
 resize2fs /dev/mapper/pve-root
 
 # Remover mensagem de SUBSCRIPTION do Promox
@@ -10,4 +12,10 @@ sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/
 
 # Atualizar tudo
 sudo apt update && sudo apt upgrade && sudo apt dist-upgrade 
+
+# Ativar Windows
+irm https://massgrave.dev/get | iex
+
+#Proxmox Scripts
+https://tteck.github.io/Proxmox/
 
