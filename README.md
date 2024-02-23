@@ -1,7 +1,5 @@
-# PROXMOX
-Management Network Configuration
+# Management Network Configuration
 ![management_network_configuration](imagens/management_network_configuration.png)
-
 
 # Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM
 lvremove /dev/pve/data
@@ -21,4 +19,11 @@ irm https://massgrave.dev/get | iex
 
 #Proxmox Scripts
 https://tteck.github.io/Proxmox/
+
+
+
+
+
+
+
 
