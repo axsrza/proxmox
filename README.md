@@ -1,8 +1,3 @@
-# PROXMOX
-## Management Network Configuration
-
-![management_network_configuration](imagens/management_network_configuration.png)
-
 ## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM
 
 ```bash
