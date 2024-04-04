@@ -9,7 +9,7 @@ resize2fs /dev/mapper/pve-root
 ## Remover mensagem de SUBSCRIPTION do Proxmox
 
 ```bash
-sed -Ezi.bak “s/(Ext.Msg.show({\s+title: gettext(‘No valid sub)/void({ \/\/\1/g” /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
+sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
 ```
 
 ## Atualizar tudo
