@@ -18,7 +18,7 @@ sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/
 sudo apt update && sudo apt upgrade && sudo apt dist-upgrade
 ```
 
-## Ativar Windows
+## Ativar Windows / Office
 
 ```bash
 irm https://massgrave.dev/get | iex
