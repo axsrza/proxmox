@@ -24,6 +24,8 @@ sudo apt update && sudo apt upgrade && sudo apt dist-upgrade
 irm https://massgrave.dev/get | iex
 ```
 
+## Scrcpy Wifi
+
 ```bash
 .\adb tcpip 5555
 .\adb connect 192.168.1.1:5555
