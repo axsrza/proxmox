@@ -31,3 +31,11 @@ irm https://massgrave.dev/get | iex
 .\adb connect 192.168.1.1:5555
 .\scrcpy -s 192.168.1.1:5555
 ```
+
+## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM (terminal)
+
+```bash
+lvremove /dev/pve/data
+lvresize -l +100%FREE /dev/pve/root
+resize2fs /dev/mapper/pve-root
+```
