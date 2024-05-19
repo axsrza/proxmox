@@ -37,3 +37,11 @@ irm https://massgrave.dev/get | iex
 ```bash
 sudo apt install nano curl wget openssh-server net-tools
 ```
+
+## alterar2
+
+```bash
+sudo nano /etc/ssh/sshd_config
+sudo passwd root
+systemctl restart ssh
+```
