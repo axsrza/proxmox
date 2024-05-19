@@ -35,13 +35,12 @@ irm https://massgrave.dev/get | iex
 ## alterar
 
 ```bash
-sudo apt install nano curl wget openssh-server net-tools
-```
-
-## alterar2
-
-```bash
-sudo nano /etc/ssh/sshd_config
+bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/debian.sh)"
+sudo apt update
 sudo passwd root
-systemctl restart ssh
+sudo apt install net-tools
+ifconfig
+sudo nano /etc/ssh/sshd_config
+PermitRootLogin yes
+sudo service ssh restart
 ```
