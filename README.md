@@ -32,10 +32,8 @@ irm https://massgrave.dev/get | iex
 .\scrcpy -s 192.168.1.1:5555
 ```
 
-## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM (terminal)
+## alterar
 
 ```bash
-lvremove /dev/pve/data
-lvresize -l +100%FREE /dev/pve/root
-resize2fs /dev/mapper/pve-root
+sudo apt install nano curl wget openssh-server net-tools
 ```
