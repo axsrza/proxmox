@@ -24,6 +24,17 @@ apt update && apt upgrade && apt dist-upgrade
 irm https://massgrave.dev/get | iex
 ```
 
+## Formatar SSD via CMD
+
+```bash
+diskpart
+list disk
+select disk
+clean
+create partition primary
+format fs=ntfs
+```
+
 ## Scrcpy Wifi (powershell)
 
 ```bash
