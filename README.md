@@ -15,7 +15,7 @@ sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/
 ## Atualizar tudo (terminal)
 
 ```bash
-sudo apt update && sudo apt upgrade && sudo apt dist-upgrade
+apt update && apt upgrade && apt dist-upgrade
 ```
 
 ## Ativar Windows / Office (powershell)
