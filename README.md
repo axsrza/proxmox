@@ -77,3 +77,17 @@ End? [2146MB]? -0
 (parted) quit
 (reboot if not going further)
 ```
+
+## PCI Passthrough RTX3060ti
+
+```bash
+lspci | grep VGA
+06:00.0 VGA compatible controller: NVIDIA Corporation GA103 [GeForce RTX 3060 Ti] (rev a1)
+
+dmesg | grep -e DMAR -e IOMMU
+[    0.378204] pci 0000:00:00.2: AMD-Vi: IOMMU performance counters supported
+[    0.381636] perf/amd_iommu: Detected AMD IOMMU #0 (2 banks, 4 counters/bank).
+
+
+
+```
