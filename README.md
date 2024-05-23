@@ -60,6 +60,7 @@ format fs=ntfs
 ## ifconfig
 
 ```bash
+apt update
 apt install net-tools
 ifconfig
 
@@ -69,14 +70,7 @@ ifconfig
 
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/vm/debian-vm.sh)"
-
-#Apos a criação da VM#
-lspci
-nano /etc/pve/qemu-server/100.conf
-args: -device vfio-pci,host=06:00.0
-
 passwd root
-
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' -e 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 ssh-keygen -A
 systemctl restart sshd
@@ -88,7 +82,6 @@ systemctl restart sshd
 ```bash
 apt update
 apt install -y parted
-
 parted /dev/sda
 resizepart 1
 Fix/Ignore? Fix
@@ -117,7 +110,6 @@ dmesg | grep -e DMAR -e IOMMU
 
 echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
 echo "options kvm ignore_msrs=1 report_ignored_msrs=0" > /etc/modprobe.d/kvm.conf
-
 echo "blacklist nvidia" >> /etc/modprobe.d/blacklist.conf
 
 lspci
@@ -133,7 +125,6 @@ reboot
 
 ```bash
 nano /root/iommu_group.sh
-
 ###### iommu script ######
 #!/bin/bash
 shopt -s nullglob
@@ -144,42 +135,42 @@ for g in $(find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V); do
     done;
 done;
 ###### iommu script ######
-
 chmod +x /root/iommu_group.sh
 /root/iommu_group.sh
 
 ```
 
-## alterar
+## Instalar Driver Nvidia
 
 ```bash
-apt update && apt upgrade -y
+sudo nano /etc/initramfs-tools/modules
+vfio-pci
+update-initramfs -u
 
+apt update && apt upgrade -y
 echo 'deb http://deb http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
-
 echo 'deb http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
-
 echo 'deb http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
-
 echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
-
 apt update && apt upgrade -y
-apt install nvidia-driver --no-install-recommends nvidia-cuda-toolkit nvidia-headless nvidia-utils libnvidia-encode nvidia-kernel-dkms
+apt install nvidia-driver
+
+lspci -k | grep -EA3 'VGA|3D|Display'
 
 ```
