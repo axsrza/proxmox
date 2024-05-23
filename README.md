@@ -5,7 +5,7 @@
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
 ```
 
-## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM (Remova LVM primeiramente via Interface Grafica e Adicione Contente Local)
+## Remover LOCAL-LVM via Interface Grafica e Adicionar Content em LOCAL
 
 ```bash
 lvremove /dev/pve/data
@@ -13,19 +13,19 @@ lvresize -l +100%FREE /dev/pve/root
 resize2fs /dev/mapper/pve-root
 ```
 
-## Remover mensagem de SUBSCRIPTION do Proxmox (terminal)
+## Remover mensagem de SUBSCRIPTION
 
 ```bash
 sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
 ```
 
-## Atualizar tudo (terminal)
+## Atualizar Tudo
 
 ```bash
 apt update && apt upgrade && apt dist-upgrade
 ```
 
-## Ativar Windows / Office (powershell)
+## Ativar Windows / Office via powershell
 
 ```bash
 irm https://massgrave.dev/get | iex
@@ -42,7 +42,7 @@ create partition primary
 format fs=ntfs
 ```
 
-## Scrcpy Wifi (powershell)
+## Scrcpy Wifi via powershell
 
 ```bash
 .\adb tcpip 5555
@@ -88,12 +88,17 @@ End? [2146MB]? -0
 ## PCI Passthrough RTX3060ti
 
 ```bash
-lspci | grep VGA
-06:00.0 VGA compatible controller: NVIDIA Corporation GA103 [GeForce RTX 3060 Ti] (rev a1)
+nano /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
+update-grub
 
+nano /etc/modules
+vfio
+vfio_iommu_type1
+vfio_pci
+vfio_virqfd
+reboot
 dmesg | grep -e DMAR -e IOMMU
-[    0.378204] pci 0000:00:00.2: AMD-Vi: IOMMU performance counters supported
-[    0.381636] perf/amd_iommu: Detected AMD IOMMU #0 (2 banks, 4 counters/bank).
 
 
 
