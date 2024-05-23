@@ -3,6 +3,7 @@
 
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
+
 ```
 
 ## Remover LOCAL-LVM via Interface Grafica e Adicionar Content em LOCAL
@@ -11,24 +12,28 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-i
 lvremove /dev/pve/data
 lvresize -l +100%FREE /dev/pve/root
 resize2fs /dev/mapper/pve-root
+
 ```
 
 ## Remover mensagem de SUBSCRIPTION
 
 ```bash
 sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
+
 ```
 
 ## Atualizar Tudo
 
 ```bash
 apt update && apt upgrade && apt dist-upgrade
+
 ```
 
 ## Ativar Windows / Office via powershell
 
 ```bash
 irm https://massgrave.dev/get | iex
+
 ```
 
 ## Formatar SSD via CMD
@@ -40,6 +45,7 @@ select disk
 clean
 create partition primary
 format fs=ntfs
+
 ```
 
 ## Scrcpy Wifi via powershell
@@ -48,6 +54,7 @@ format fs=ntfs
 .\adb tcpip 5555
 .\adb connect 192.168.1.1:5555
 .\scrcpy -s 192.168.1.1:5555
+
 ```
 
 ## ifconfig
@@ -55,6 +62,7 @@ format fs=ntfs
 ```bash
 apt install net-tools
 ifconfig
+
 ```
 
 ## Debian 12 VM
@@ -67,6 +75,7 @@ passwd root
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' -e 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 ssh-keygen -A
 systemctl restart sshd
+
 ```
 
 ## Debian 12 VM (Resize the Bootdisk (/dev/sda))
@@ -83,6 +92,7 @@ Yes/No? Yes
 End? [2146MB]? -0
 (parted) quit
 (reboot if not going further)
+
 ```
 
 ## PCI Passthrough RTX3060ti
@@ -136,5 +146,19 @@ done;
 
 chmod +x /root/iommu_group.sh
 /root/iommu_group.sh
+
+```
+
+## alterar
+
+```bash
+apt update && apt upgrade -y
+echo 'deb http://deb.debian.org/debian/ buster main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian/ bookworm main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://security.debian.org/debian-security bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
+apt update
+apt install -y nvidia-driver
 
 ```
