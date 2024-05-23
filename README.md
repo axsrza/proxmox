@@ -113,11 +113,7 @@ dmesg | grep -e DMAR -e IOMMU
 echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
 echo "options kvm ignore_msrs=1 report_ignored_msrs=0" > /etc/modprobe.d/kvm.conf
 
-echo "blacklist radeon" >> /etc/modprobe.d/blacklist.conf
 echo "blacklist nvidia" >> /etc/modprobe.d/blacklist.conf
-echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
-echo "blacklist nvidiafb" >> /etc/modprobe.d/blacklist.conf
-echo "blacklist snd_hda_intel" >> /etc/modprobe.d/blacklist.conf
 
 lspci
 lspci -n -s 06:00
@@ -179,6 +175,6 @@ echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free'
 echo 'deb-src http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
 
 apt update && apt upgrade -y
-apt install -y nvidia-driver
+apt install nvidia-driver --no-install-recommends nvidia-cuda-toolkit nvidia-headless nvidia-utils libnvidia-encode nvidia-kernel-dkms
 
 ```
