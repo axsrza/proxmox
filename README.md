@@ -117,3 +117,24 @@ update-initramfs -u
 reboot
 
 ```
+
+## IOMMU script
+
+```bash
+nano /root/iommu_group.sh
+
+###### iommu script ######
+#!/bin/bash
+shopt -s nullglob
+for g in $(find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V); do
+    echo "IOMMU Group ${g##*/}:"
+    for d in $g/devices/*; do
+        echo -e "\t$(lspci -nns ${d##*/})"
+    done;
+done;
+###### iommu script ######
+
+chmod +x /root/iommu_group.sh
+/root/iommu_group.sh
+
+```
