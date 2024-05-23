@@ -153,12 +153,32 @@ chmod +x /root/iommu_group.sh
 
 ```bash
 apt update && apt upgrade -y
-echo 'deb http://deb.debian.org/debian/ buster main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian/ bookworm main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://security.debian.org/debian-security bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
+
+echo 'deb http://deb http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
+
+echo 'deb http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
+
+echo 'deb http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
+
 echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
-apt update
+echo 'deb-src http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
+
+apt update && apt upgrade -y
 apt install -y nvidia-driver
 
 ```
