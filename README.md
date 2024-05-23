@@ -1,4 +1,11 @@
-## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM (terminal)
+
+## Após Instalação (This script provides options for managing Proxmox VE repositories, including disabling the Enterprise Repo, adding or correcting PVE sources, enabling the No-Subscription Repo, adding the test Repo, disabling the subscription nag, updating Proxmox VE, and rebooting the system.)
+
+```bash
+bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
+```
+
+## Aumentar o LOCAL storage do Proxmox e remover LOCAL-LVM (Remova LVM primeiramente via Interface Grafica e Adicione Contente Local)
 
 ```bash
 lvremove /dev/pve/data
