@@ -70,6 +70,11 @@ ifconfig
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/vm/debian-vm.sh)"
 
+#Apos a criação da VM#
+lspci
+nano /etc/pve/qemu-server/100.conf
+args: -device vfio-pci,host=06:00.0
+
 passwd root
 
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' -e 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
