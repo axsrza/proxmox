@@ -8,7 +8,7 @@ apt install -y git build-essential libssl-dev
 curl -fsSL https://ollama.com/install.sh | sh
 
 # Instalar Node.js
-curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_current.x | -E bash -
 apt-get install -y nodejs
 
 # Instalar Python
