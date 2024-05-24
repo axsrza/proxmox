@@ -1,3 +1,5 @@
+Ollama-Open-WebUI.md
+```bash
 # Atualizar pacotes e instalar dependências do sistema
 apt update
 apt install -y git build-essential libssl-dev
@@ -30,3 +32,4 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt -U
 bash start.sh
+```
