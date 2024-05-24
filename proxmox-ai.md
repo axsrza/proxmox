@@ -19,7 +19,7 @@ resize2fs /dev/mapper/pve-root
 
 ```bash
 nano /etc/default/grub
-GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"
 update-grub
 
 nano /etc/modules
@@ -27,8 +27,6 @@ vfio
 vfio_iommu_type1
 vfio_pci
 vfio_virqfd
-reboot
-dmesg | grep -e DMAR -e IOMMU
 
 echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
 echo "options kvm ignore_msrs=1 report_ignored_msrs=0" > /etc/modprobe.d/kvm.conf
@@ -39,6 +37,7 @@ lspci -n -s 06:00
 10de:2414,10de:2288
 echo "options vfio-pci ids=10de:2414,10de:2288 disable_vga=1" > /etc/modprobe.d/vfio.conf
 update-initramfs -u
+dmesg | grep -e DMAR -e IOMMU
 reboot
 
 ```
@@ -61,6 +60,7 @@ chmod +x /root/iommu_group.sh
 /root/iommu_group.sh
 
 ```
+
 ## VM - Debian 12 script
 
 ```bash
@@ -84,18 +84,17 @@ Partition number? 1
 Yes/No? Yes
 End? [2146MB]? -0
 (parted) quit
-(reboot if not going further)
+reboot
 
 ```
 
 ## VM - Instalar Driver Nvidia
 
 ```bash
-sudo nano /etc/initramfs-tools/modules
+nano /etc/initramfs-tools/modules
 vfio-pci
 update-initramfs -u
 
-apt update && apt upgrade -y
 echo 'deb http://deb http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
 echo 'deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
@@ -118,7 +117,9 @@ echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free'
 echo 'deb-src http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
 apt update && apt upgrade -y
 apt install nvidia-driver
+reboot
 
 lspci -k | grep -EA3 'VGA|3D|Display'
+nvidia-settings -c :0 -a "[gpu:0]/GPUFanControlState=1"
 
 ```
