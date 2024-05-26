@@ -49,7 +49,7 @@ docker run -d -p 3000:8080 --gpus=all -v ollama:/root/.ollama -v open-webui:/app
 
 ```
 
-## Adicioando Modelos
+## Adicionando Modelos
 
 ```bash
 docker exec -it open-webui bash
