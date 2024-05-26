@@ -1,15 +1,26 @@
-## Após Instalação
+## Após Instalação 
 
 ```bash
+#logar na conta criada na instalação
 sudo passwd root
+#digite a senha criada na instalação
+#defina uma senha para o root
 
+sudo reboot
+
+```
+## Via SSH logar na conta criada
+
+```bash
+#logar na conta criada na instalação
+su
+#digitar a senha para o root
 nano /etc/ssh/sshd_config
 PermitRootLogin yes
 
 sudo reboot
 
 ```
-
 ## Nvidia Driver
 
 ```bash
