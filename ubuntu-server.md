@@ -9,3 +9,15 @@ PermitRootLogin yes
 sudo reboot
 
 ```
+
+## Nvidia Driver
+
+```bash
+sudo apt update && sudo apt upgrade
+ubuntu-drivers devices
+
+sudo apt install nvidia-driver-X
+
+sudo reboot
+
+```
