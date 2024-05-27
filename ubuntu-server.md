@@ -1,7 +1,7 @@
-## Após Instalação 
+## Após a instalação do Ubuntu Server
 
 ```bash
-#logar na conta criada na instalação
+#ainda no terminal, logar na conta criada na instalação
 sudo passwd root
 #digite a senha criada na instalação
 #defina uma senha para o root
