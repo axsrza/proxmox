@@ -24,7 +24,7 @@ sudo reboot
 sudo apt update && sudo apt upgrade
 ubuntu-drivers devices
 
-sudo apt install nvidia-driver-X
+sudo apt install nvidia-driver-X #substitua o X pelo numero da distro que consta recommended
 
 sudo reboot
 
