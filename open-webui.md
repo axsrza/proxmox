@@ -14,6 +14,7 @@ docker ps
 
 ```bash
 docker exec -it open-webui bash
+
 ollama pull llama3 #subistitua llama3 pelo models desejado https://ollama.com/library
 
 exit
