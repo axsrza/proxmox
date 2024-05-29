@@ -25,8 +25,8 @@ services:
     ports:
       - 8081:80
     volumes:
-      - /home:/srv
-      - /home/filebrowser/filebrowser.db:/database.db
+      - /root:/srv
+      - /root/filebrowser/filebrowser.db:/database.db
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
