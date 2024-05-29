@@ -5,7 +5,8 @@
 mkdir filebrowser
 cd filebrowser
 touch docker-compose.yml
-nano docker-compose.yml # copy the contents from below
+nano docker-compose.yml # copy the contents from below docker-compose.yml
+
 touch filebrowser.db
 docker-compose up -d --force-recreate
 
