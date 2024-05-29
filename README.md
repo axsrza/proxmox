@@ -1,176 +1,134 @@
-
-## Após Instalação (This script provides options for managing Proxmox VE repositories, including disabling the Enterprise Repo, adding or correcting PVE sources, enabling the No-Subscription Repo, adding the test Repo, disabling the subscription nag, updating Proxmox VE, and rebooting the system.)
+## Após a instalação do Ubuntu Server
 
 ```bash
-bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
+#ainda no terminal, logar na conta criada na instalação
+sudo passwd root #digite a senha criada na instalação
+#defina uma senha para o root
+
+sudo reboot
 
 ```
 
-## Remover LOCAL-LVM via Interface Grafica e Adicionar Content em LOCAL
+## Via SSH logar na conta criada
 
 ```bash
-lvremove /dev/pve/data
-lvresize -l +100%FREE /dev/pve/root
-resize2fs /dev/mapper/pve-root
+#logar na conta criada na instalação
+su #digitar a senha para o root
+nano /etc/ssh/sshd_config #retire o # na frente da linha que consta PermitRootLogin prohibit-password e substitua por PermitRootLogin yes
+
+sudo reboot
 
 ```
 
-## Remover mensagem de SUBSCRIPTION
+## Instalação docker-engine
 
 ```bash
-sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
+#https://docs.docker.com/engine/install/ubuntu/
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+docker --version
+
+sudo docker run hello-world
 
 ```
 
-## Atualizar Tudo
+## Instalação docker-compose
 
 ```bash
-apt update && apt upgrade && apt dist-upgrade
+#https://docs.docker.com/compose/install/standalone/
+curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker compose version
 
 ```
 
-## Ativar Windows / Office via powershell
+## Nvidia Driver
 
 ```bash
-irm https://massgrave.dev/get | iex
+sudo apt update && sudo apt upgrade
+ubuntu-drivers devices
+
+sudo apt install nvidia-driver-X #substitua o X pelo numero da distro que consta recommended
+
+sudo reboot
 
 ```
 
-## Formatar SSD via CMD
+## Nvidia Container Toolkit
 
 ```bash
-diskpart
-list disk
-select disk
-clean
-create partition primary
-format fs=ntfs
+curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+
+sudo reboot
 
 ```
 
-## Scrcpy Wifi via powershell
+## Monitorar GPU
 
 ```bash
-.\adb tcpip 5555
-.\adb connect 192.168.1.1:5555
-.\scrcpy -s 192.168.1.1:5555
+watch -n 1 nvidia-smi
 
 ```
 
-## ifconfig
+## Open WebUI
+
+```bash
+#https://github.com/open-webui/open-webui
+#Installing Open WebUI with Bundled Ollama Support
+#With GPU Support: Utilize GPU resources by running the following command
+docker run -d -p 3000:8080 --gpus=all -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollama
+
+docker ps
+
+```
+
+## Adicionando Modelos
+
+```bash
+docker exec -it open-webui bash
+ollama pull llama3 #subistitua llama3 pelo models desejado https://ollama.com/library
+
+exit
+
+```
+
+## Oobabooga text-generation-webui
 
 ```bash
 apt update
-apt install net-tools
-ifconfig
+apt install -y git build-essential libssl-dev
+git clone https://github.com/oobabooga/text-generation-webui.git
+cd text-generation-webui/
+./start_linux.sh #apos a instalação e criação ctrl+c para sair
+
+./update_wizard_linux.sh #atualizar webui e extenções
+
+exit
+
+nano CMD_FLAGS.txt #tirar o # da linha --listen --api apos ctrl+X salvar e sair
+./start_linux.sh #na aba extensions ativar o coqui tts e aplicar do default
 
 ```
 
-## Debian 12 VM
-
-```bash
-bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/vm/debian-vm.sh)"
-passwd root
-sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' -e 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-ssh-keygen -A
-systemctl restart sshd
-
-```
-
-## Debian 12 VM (Resize the Bootdisk (/dev/sda))
-
-```bash
-apt update
-apt install -y parted
-parted /dev/sda
-resizepart 1
-Fix/Ignore? Fix
-Partition number? 1
-Yes/No? Yes
-End? [2146MB]? -0
-(parted) quit
-(reboot if not going further)
-
-```
-
-## PCI Passthrough RTX3060ti
-
-```bash
-nano /etc/default/grub
-GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"
-update-grub
-
-nano /etc/modules
-vfio
-vfio_iommu_type1
-vfio_pci
-vfio_virqfd
-reboot
-dmesg | grep -e DMAR -e IOMMU
-
-echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
-echo "options kvm ignore_msrs=1 report_ignored_msrs=0" > /etc/modprobe.d/kvm.conf
-echo "blacklist nvidia" >> /etc/modprobe.d/blacklist.conf
-
-lspci
-lspci -n -s 06:00
-10de:2414,10de:2288
-echo "options vfio-pci ids=10de:2414,10de:2288 disable_vga=1" > /etc/modprobe.d/vfio.conf
-update-initramfs -u
-reboot
-
-```
-
-## IOMMU script
-
-```bash
-nano /root/iommu_group.sh
-###### iommu script ######
-#!/bin/bash
-shopt -s nullglob
-for g in $(find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V); do
-    echo "IOMMU Group ${g##*/}:"
-    for d in $g/devices/*; do
-        echo -e "\t$(lspci -nns ${d##*/})"
-    done;
-done;
-###### iommu script ######
-chmod +x /root/iommu_group.sh
-/root/iommu_group.sh
-
-```
-
-## Instalar Driver Nvidia
-
-```bash
-sudo nano /etc/initramfs-tools/modules
-vfio-pci
-update-initramfs -u
-
-apt update && apt upgrade -y
-echo 'deb http://deb http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm-updates main non-free-firmware' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm main' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm-updates main' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
-echo 'deb-src http://deb.debian.org/debian bookworm-backports main contrib non-free' | tee -a /etc/apt/sources.list
-apt update && apt upgrade -y
-apt install nvidia-driver
-
-lspci -k | grep -EA3 'VGA|3D|Display'
-
-```
