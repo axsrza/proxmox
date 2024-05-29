@@ -1,20 +1,17 @@
-## oobabooga text-generation-webui
+## Oobabooga text-generation-webui
 
 ```bash
 apt update
 apt install -y git build-essential libssl-dev
 git clone https://github.com/oobabooga/text-generation-webui.git
-
 cd text-generation-webui/
-./start_linux.sh
-ctrl+c
+./start_linux.sh #apos a instalação e criação ctrl+c para sair
 
-cd text-generation-webui/
-./cmd_linux.sh
-pip install tts
-reboot
+./update_wizard_linux.sh #atualizar webui e extenções
 
-cd text-generation-webui/
-./start_linux.sh --listen --listen-port 7777 --listen-host 192.168.1.200
+exit
+
+nano CMD_FLAGS.txt #tirar o # da linha --listen --api apos ctrl+X salvar e sair
+./start_linux.sh #na aba extensions ativar o coqui tts e aplicar do default
 
 ```
