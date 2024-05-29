@@ -1,0 +1,33 @@
+## Intalação filebrowser
+
+```bash
+#https://technotim.live/posts/meet-file-browser/
+mkdir filebrowser
+cd filebrowser
+touch docker-compose.yml
+nano docker-compose.yml # copy the contents from below
+touch filebrowser.db
+docker-compose up -d --force-recreate
+
+```
+
+## docker-compose.yml
+
+```bash
+---
+version: '3'
+services:
+  file-browser:
+    image: filebrowser/filebrowser
+    container_name: file-browser
+    user: 0:0
+    ports:
+      - 8081:80
+    volumes:
+      - /home:/srv
+      - /home/filebrowser/filebrowser.db:/database.db
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+```
