@@ -19,19 +19,15 @@ services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
-    ports:
-      - "5353:53/tcp"
-      - "5353:53/udp"
-      - "6767:67/udp" # Apenas necessário se estiver usando o Pi-hole como servidor DHCP
-      - "8080:80/tcp"
+    network_mode: "host"
     environment:
       TZ: 'America/Sao_Paulo'
-      # WEBPASSWORD: 'suasenha'
+      # WEBPASSWORD: 'segredo0'
     volumes:
       - '/root/pihole/etc-pihole:/etc/pihole'
       - '/root/pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
     cap_add:
-      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+      - NET_ADMIN
     restart: unless-stopped
 
 ```
