@@ -22,7 +22,6 @@ services:
     network_mode: "host"
     environment:
       TZ: 'America/Sao_Paulo'
-      # WEBPASSWORD: 'segredo0'
     volumes:
       - '/root/pihole/etc-pihole:/etc/pihole'
       - '/root/pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
