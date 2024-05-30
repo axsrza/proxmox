@@ -13,6 +13,9 @@ sudo reboot
 ```bash
 #logar na conta criada na instalação
 su #digitar a senha para o root
+
+cd /
+cd
 nano /etc/ssh/sshd_config #retire o # na frente da linha que consta PermitRootLogin prohibit-password e substitua por PermitRootLogin yes
 
 sudo reboot
