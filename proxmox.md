@@ -1,4 +1,3 @@
-
 ## HOST - Após Instalação
 
 ```bash
@@ -172,5 +171,18 @@ format fs=ntfs
 apt update
 apt install net-tools
 ifconfig
+
+```
+
+## adicionar hd externo lxc
+
+```bash
+cd /etc/pve/lxc/
+ls
+
+nano 100
+
+mp0: /mnt/pve/hdexterno,mp=/mnt/
+mp1: /mnt/pve/hdexterno2,mp=/mnt2/
 
 ```
