@@ -51,7 +51,7 @@ sudo nano /etc/environment
 
 #Final do PATH
 :/usr/local/cuda/bin
-#Linha de baixo
+#Segunda linha
 LD_LIBRARY_PATH="/usr/local/cuda/lib64"
 
 sudo reboot
@@ -70,10 +70,10 @@ sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
 sudo apt-get -y install cudnn
 
-#cuDNN variável de ambiente (versão mair ou igual a 9)*
+#cuDNN variável de ambiente
 sudo nano /etc/environment
 
-#Final do LD_LIBRARY_PATH
+#Segunda linha
 :/usr/lib/x86_64-linux-gnu
 
 sudo reboot
