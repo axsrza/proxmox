@@ -29,8 +29,13 @@ sudo ubuntu-drivers devices
 
 sudo apt install nvidia-driver-XXX
 
+sudo reboot
+
 #CUDA
 #https://developer.nvidia.com/cuda-12-1-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network
+cd /home/homelab
+mkdir downloads
+cd downloads
 
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
 
@@ -49,8 +54,14 @@ sudo nano /etc/environment
 #Linha de baixo
 LD_LIBRARY_PATH="/usr/local/cuda/lib64"
 
+sudo reboot
+
 #cuDNN
 #https://developer.nvidia.com/cudnn-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network
+
+cd /home/homelab
+mkdir downloads
+cd downloads
 
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 
@@ -64,5 +75,7 @@ sudo nano /etc/environment
 
 #Final do LD_LIBRARY_PATH
 :/usr/lib/x86_64-linux-gnu
+
+sudo reboot
 
 ```
