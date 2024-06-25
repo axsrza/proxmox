@@ -6,5 +6,6 @@ apt install nvidia-driver firmware-misc-nonfree
 reboot
 
 apt install nvidia-cuda-dev nvidia-cuda-toolkit libnvidia-encode1
+reboot
 
 ```
