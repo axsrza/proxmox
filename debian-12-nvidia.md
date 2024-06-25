@@ -1,21 +1,7 @@
 ## debian-12-nvidia
 
 ```bash
-#cuDNN
-sudo apt remove --purge cudnn
-sudo apt autoremove
-sudo apt autoclean
+sudo apt install nvidia-detect linux-headers-amd64
+sudo apt install nvidia-driver firmware-misc-nonfree
 
-#CUDA
-sudo apt remove --purge cuda
-sudo apt autoremove
-sudo apt autoclean
-
-#Nvidia Driver
-nvidia-smi
-
-sudo apt remove --purge nvidia-driver-XXX
-sudo apt autoremove
-sudo apt autoclean
-  
 ```
