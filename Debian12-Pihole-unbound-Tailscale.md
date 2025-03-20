@@ -287,7 +287,9 @@ curl -fsSL https://tailscale.com/install.sh | sh
 ```bash
 
 echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.d/99-tailscale.conf
+
 echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.d/99-tailscale.conf
+
 sysctl -p /etc/sysctl.d/99-tailscale.conf
 
 ```
@@ -298,6 +300,4 @@ sysctl -p /etc/sysctl.d/99-tailscale.conf
 
 tailscale up --accept-dns=false --advertise-routes=192.168.1.0/24 --advertise-exit-node
 
-
 ```
-
