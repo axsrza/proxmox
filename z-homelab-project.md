@@ -113,7 +113,7 @@ docker compose version
 #### 📁 Estrutura do diretório:
 
 ```text
-~/homelab/blog/
+/root/homelab/blog/
 ├── docker-compose.yml
 └── html/
     └── index.html
@@ -122,8 +122,8 @@ docker compose version
 #### 📜 Criar um index.html simples
 
 ```bash
-mkdir -p ~/home/homelab/blog/html
-nano ~/home/homelab/blog/html/index.html
+mkdir -p ~/homelab/blog/html
+nano ~/homelab/blog/html/index.html
 ```
 
 ##### Conteúdo do `index.html`
@@ -143,11 +143,10 @@ nano ~/home/homelab/blog/html/index.html
 </html>
 ```
 
-#### 🚀 Comando para subir:
+#### 📜 Criar um `docker-compose.yml`
 
 ```bash
-cd ~/home/homelab/blog
-docker-compose up -d
+nano ~/homelab/blog/docker-compose.yml
 ```
 
 #### 📜 Exemplo `docker-compose.yml`
@@ -163,6 +162,13 @@ services:
     volumes:
       - ./html:/usr/share/nginx/html:ro
     restart: unless-stopped
+```
+
+#### 🚀 Comando para subir:
+
+```bash
+cd ~/homelab/blog
+docker-compose up -d
 ```
 
 Acesse localmente via: `http://localhost:8080`
