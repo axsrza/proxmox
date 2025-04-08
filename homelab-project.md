@@ -233,140 +233,165 @@ cloudflared service install
 
 ---
 
-# 5. Adicionar Pi-hole + Unbound via Docker
+# 5. Adicionar Pi-hole + Unbound (via Docker)
 
-## 🧠 Objetivo
-Configurar o Pi-hole como bloqueador de anúncios e resolver DNS localmente com Unbound, tudo containerizado via Docker.
+## Visão geral
+Essa etapa cobre a instalação e configuração do Pi-hole como servidor DNS com bloqueio de anúncios e do Unbound como DNS recursivo local (resolver seguro e privativo). Ambos serão executados em containers Docker, com o Unbound atendendo localmente o Pi-hole como resolver upstream. O objetivo é garantir que:
+
+- O **Pi-hole** responda por requisições DNS da rede e bloqueie domínios maliciosos ou de propaganda.
+- O **Unbound** faça as consultas DNS diretamente aos servidores raiz, sem recorrer a DNS públicos como 1.1.1.1 ou 8.8.8.8.
+- A **porta 80** do host esteja dedicada ao Pi-hole (interface web), já que o blog está na porta 8888.
 
 ---
 
-## 📁 Estrutura do diretório
+## Estrutura de diretórios esperada
+Criaremos a seguinte estrutura para os arquivos de configuração e volumes persistentes:
 
 ```bash
-/homelab/pihole-unbound/
+mkdir -p ~/docker/pihole-unbound/{unbound,etc-pihole,etc-dnsmasq.d}
+```
+
+Estrutura resultante:
+```
+~/docker/pihole-unbound/
 ├── docker-compose.yml
-├── etc-pihole/             # persistência do Pi-hole
-├── etc-dnsmasq.d/          # configurações extras do Pi-hole
-└── unbound/
-    └── unbound.conf        # config personalizada do Unbound
+├── unbound/
+│   └── unbound.conf
+├── etc-pihole/        # Persistência dos dados do Pi-hole
+├── etc-dnsmasq.d/     # Config do dnsmasq (usado pelo Pi-hole)
 ```
 
 ---
 
-## 🔧 Criar diretórios e arquivos base
+## 1. Criar o arquivo `unbound.conf`
+
+Criar em `~/docker/pihole-unbound/unbound/unbound.conf` com o conteúdo:
 
 ```bash
-mkdir -p /homelab/pihole-unbound/{etc-pihole,etc-dnsmasq.d,unbound}
-nano /homelab/pihole-unbound/unbound/unbound.conf
+nano ~/docker/pihole-unbound/unbound/unbound.conf
 ```
-
-### 📜 Exemplo: `unbound.conf`
 
 ```conf
-a server:
-    verbosity: 1
-    interface: 0.0.0.0
-    port: 5335
-    do-ip4: yes
-    do-udp: yes
-    do-tcp: yes
-    access-control: 0.0.0.0/0 allow
-    root-hints: "/etc/unbound/root.hints"
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    use-caps-for-id: no
-    edns-buffer-size: 1232
-    prefetch: yes
-    cache-min-ttl: 3600
-    cache-max-ttl: 86400
-    hide-identity: yes
-    hide-version: yes
-    qname-minimisation: yes
-    rrset-roundrobin: yes
-    so-rcvbuf: 1m
-    so-sndbuf: 1m
-    val-clean-additional: yes
+server:
+  verbosity: 1
+  interface: 0.0.0.0
+  port: 5335
+  do-ip4: yes
+  do-udp: yes
+  do-tcp: yes
+  hide-identity: yes
+  hide-version: yes
+  use-caps-for-id: yes
+  edns-buffer-size: 1232
+  harden-glue: yes
+  harden-dnssec-stripped: yes
+  cache-min-ttl: 3600
+  cache-max-ttl: 86400
+  prefetch: yes
+  num-threads: 2
+  so-rcvbuf: 4m
+  so-sndbuf: 4m
+  val-log-level: 1
+  unwanted-reply-threshold: 10000
+
+  rrset-roundrobin: yes
+
+  trust-anchor-file: "/var/lib/unbound/root.key"
+
+  root-hints: "/var/lib/unbound/root.hints"
 
 forward-zone:
-    name: "."
-    forward-addr: 1.1.1.1
-    forward-addr: 1.0.0.1
+  name: "."
+  forward-tls-upstream: no
 ```
 
 ---
 
-## 📦 Criar `docker-compose.yml`
+## 2. Criar `docker-compose.yml`
+
+Criar em `~/docker/pihole-unbound/docker-compose.yml`:
 
 ```bash
-nano /homelab/pihole-unbound/docker-compose.yml
+nano ~/docker/pihole-unbound/docker-compose.yml
 ```
-
-### 📜 Conteúdo:
 
 ```yaml
 version: "3"
 
 services:
+  unbound:
+    image: mvance/unbound:latest
+    container_name: unbound
+    restart: unless-stopped
+    volumes:
+      - ./unbound:/opt/unbound/etc/unbound
+    ports:
+      - "5335:5335/tcp"
+      - "5335:5335/udp"
+    networks:
+      - dns_net
+
   pihole:
-    container_name: pihole
     image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "81:80/tcp"
+      - "80:80"  # Interface web do Pi-hole
     environment:
       TZ: "America/Sao_Paulo"
-      WEBPASSWORD: "senhaforte"
+      WEBPASSWORD: "sua_senha_aqui"
       DNS1: 127.0.0.1#5335
       DNS2: 127.0.0.1#5335
     volumes:
       - ./etc-pihole/:/etc/pihole/
       - ./etc-dnsmasq.d/:/etc/dnsmasq.d/
-    restart: unless-stopped
+    networks:
+      - dns_net
+    cap_add:
+      - NET_ADMIN
 
-  unbound:
-    container_name: unbound
-    image: mvance/unbound:latest
-    ports:
-      - "5335:5335/tcp"
-      - "5335:5335/udp"
-    volumes:
-      - ./unbound:/opt/unbound/etc/unbound
-    restart: unless-stopped
+networks:
+  dns_net:
+    driver: bridge
 ```
 
 ---
 
-## 🚀 Subir os containers
+## 3. Iniciar os containers
 
 ```bash
-cd /homelab/pihole-unbound
-docker-compose up -d
+cd ~/docker/pihole-unbound
+sudo docker compose up -d
 ```
-
-Acesse a interface do Pi-hole: `http://localhost:81`
 
 ---
 
-## 🔍 Testar se o Unbound está funcionando
+## 4. Verificar funcionamento
+
+- Interface web do Pi-hole: `http://localhost/admin`
+- DNS do Pi-hole: porta 53 (TCP/UDP)
+- DNS do Unbound: porta 5335 (TCP/UDP)
+
+No painel do Pi-hole, vá em **Settings > DNS** e verifique que o resolver configurado é:
+```
+127.0.0.1#5335
+```
+
+Assim, todas as consultas da rede passam pelo Pi-hole e são resolvidas de forma segura e direta pelo Unbound (sem usar 8.8.8.8 ou 1.1.1.1).
+
+---
+
+## 5. Testar resolução DNS
 
 ```bash
-dig @127.0.0.1 -p 5335 google.com
+nslookup google.com 127.0.0.1
 ```
 
-A resposta deve mostrar o tempo e que o servidor usado foi `127.0.0.1#5335`.
-
 ---
 
-## 🔒 Configurações extras (futuro)
-- Integrar DHCP local pelo Pi-hole
-- Integrar com Tailscale (resolução via Tailscale DNS)
-- Rodar com usuário não-root (com `puid`/`pgid` via docker-compose)
+✅ Finalizado. Seu Pi-hole está rodando com Unbound local como DNS recursivo seguro. O sistema está pronto para assumir o papel de servidor DNS da sua rede!
 
----
-
-## 💡 Observações
-- O Pi-hole e Unbound estão separados, mas integrados via Docker
-- A porta `81` foi escolhida para não conflitar com o blog (porta `8888`)
-- Tudo roda em containers isolados, persistência ativada
+> 💡 **Dica:** Agora você pode configurar seu roteador (ou DHCP) para apontar o IP do seu homelab como servidor DNS principal.
 
