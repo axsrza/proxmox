@@ -201,7 +201,7 @@ cloudflared tunnel login
 
 ```bash
 cloudflared tunnel delete homelab
-cloudflared tunnel create homelab
+cloudflared tunnel create homelab #ID_DO_TUNNEL
 ```
 
 #### 📁 Criar o arquivo de configuração:
@@ -220,7 +220,7 @@ ingress:
   - service: http_status:404
 ```
 
-#### 🚀 Rodar o tunnel
+#### 🚀 Rodar o tunnel (dash.cloudflare.com CNAME @ INSERIR_ID_DO_TUNNEL.cfargotunnel.com)
 
 ```bash
 cloudflared tunnel run homelab
