@@ -113,7 +113,7 @@ docker compose version
 #### 📁 Estrutura do diretório:
 
 ```text
-/root/homelab/blog/
+/homelab/blog/
 ├── docker-compose.yml
 └── html/
     └── index.html
@@ -122,8 +122,8 @@ docker compose version
 #### 📜 Criar um index.html simples
 
 ```bash
-mkdir -p ~/homelab/blog/html
-nano ~/homelab/blog/html/index.html
+mkdir -p /homelab/blog/html
+nano /homelab/blog/html/index.html
 ```
 
 ##### Conteúdo do `index.html`
@@ -146,7 +146,7 @@ nano ~/homelab/blog/html/index.html
 #### 📜 Criar um `docker-compose.yml`
 
 ```bash
-nano ~/homelab/blog/docker-compose.yml
+nano /homelab/blog/docker-compose.yml
 ```
 
 #### 📜 Exemplo `docker-compose.yml`
@@ -167,7 +167,7 @@ services:
 #### 🚀 Comando para subir:
 
 ```bash
-cd ~/homelab/blog
+cd /homelab/blog
 chmod +x /usr/local/bin/docker-compose
 docker-compose up -d
 ```
@@ -236,7 +236,7 @@ cloudflared service install
 
 ### 🔒 Extra: Rodar containers com usuário não-root (futuro)
 
-Em uma etapa futura, será possível adaptar o projeto para rodar os serviços com um usuário não-root, com todos os arquivos e volumes dentro da `~/home`, aumentando a segurança e isolando ainda mais o host.
+Em uma etapa futura, será possível adaptar o projeto para rodar os serviços com um usuário não-root, com todos os arquivos e volumes dentro de uma home isolada, aumentando a segurança e isolando ainda mais o host.
 
 ---
 
