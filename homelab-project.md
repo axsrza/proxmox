@@ -12,7 +12,6 @@ Transformando um notebook antigo em um homelab funcional, moderno e enxuto 🚀
 ## 🐧 Sistema Operacional
 
 - **Debian 12** instalado com:
-  - Webserver
   - SSH Server
   - Standard System Utilities
 
@@ -87,7 +86,7 @@ docker compose version
 
 ### 3. Subir blog pessoal com Nginx (exemplo inicial com HTML estático)
 
-**Estrutura do diretório:**
+#### 📁 Estrutura do diretório:
 
 ```text
 ~/homelab/blog/
@@ -96,7 +95,20 @@ docker compose version
     └── index.html
 ```
 
-**Exemplo `docker-compose.yml`:**
+#### 📝 Criar um `index.html` simples
+
+```bash
+mkdir -p ~/homelab/blog/html
+nano ~/homelab/blog/html/index.html
+```
+
+**Conteúdo exemplo:**
+```html
+<h1>Olá, mundo!</h1>
+<p>Esse é meu blog rodando em um container Nginx.</p>
+```
+
+#### 🐳 Exemplo `docker-compose.yml`:
 
 ```yaml
 version: '3'
@@ -111,9 +123,10 @@ services:
     restart: unless-stopped
 ```
 
-**Comando para subir:**
+#### 🚀 Comando para subir o container:
 
 ```bash
+cd ~/homelab/blog
 docker-compose up -d
 ```
 
@@ -123,32 +136,31 @@ Acesse localmente via: `http://localhost:8080`
 
 ### 4. Configurar Cloudflare Tunnel
 
-#### 📌 Fonte: https://developers.cloudflare.com/cloudflared/
+#### 📌 Fonte: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/
 
+#### 🌩️ Instalar Cloudflared:
 ```bash
-# Baixar e instalar cloudflared
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
 sudo dpkg -i cloudflared-linux-amd64.deb
 
-# Atualizar repositórios e instalar cloudflared
 apt update
 apt install cloudflared
+```
 
-# Autenticar com Cloudflare
+#### 🔐 Login e criação do túnel:
+```bash
 cloudflared tunnel login
-
-# Criar o túnel
 cloudflared tunnel create homelab
+```
 
-# Criar o arquivo de configuração
+#### ⚙️ Criar config do túnel:
+```bash
 nano /root/.cloudflared/config.yml
 ```
 
-**Conteúdo de exemplo para `config.yml`:**
-
 ```yaml
 tunnel: homelab
-credentials-file: /root/.cloudflared/INFORMAR_AQUI_ID_DO_JSON.json
+credentials-file: /root/.cloudflared/SEU_ID_DO_TUNEL.json
 
 ingress:
   - hostname: azzor1337x.shop
@@ -156,20 +168,12 @@ ingress:
   - service: http_status:404
 ```
 
-⚠️ **Importante:** No Cloudflare DNS, adicione:
-
-```
-Tipo: CNAME
-Nome: @
-Conteúdo: SEU_ID_DO_TUNNEL.cfargotunnel.com
-```
-
-**Iniciar o túnel manualmente:**
+#### 🛠️ Rodar o túnel manualmente:
 ```bash
 cloudflared tunnel run homelab
 ```
 
-**Instalar como serviço systemd:**
+#### ⚙️ Criar serviço systemd para rodar em segundo plano:
 ```bash
 cloudflared service install
 ```
