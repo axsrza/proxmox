@@ -373,7 +373,7 @@ services:
   blog:
     image: nginx:alpine
     ports:
-      - "8080:80"
+      - "8888:80"
     volumes:
       - ./html:/usr/share/nginx/html:ro
     restart: unless-stopped
@@ -387,7 +387,7 @@ chmod +x /usr/local/bin/docker-compose
 docker-compose up -d
 ```
 
-Acesse localmente via: `http://localhost:8080`
+Acesse localmente via: `http://localhost:8888`
 
 ---
 
@@ -431,7 +431,7 @@ credentials-file: /root/.cloudflared/INSERIR_ID_DO_TUNNEL.json
 
 ingress:
   - hostname: azzor1337x.shop
-    service: http://localhost:8080
+    service: http://127.0.0.1:8888
   - service: http_status:404
 ```
 
