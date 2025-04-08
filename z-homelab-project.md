@@ -185,6 +185,7 @@ Acesse localmente via: `http://localhost:8080`
 ```bash
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
 sudo dpkg -i cloudflared-linux-amd64.deb
+rm cloudflared-linux-amd64.deb
 
 apt update
 apt install cloudflared
