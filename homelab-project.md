@@ -233,165 +233,134 @@ cloudflared service install
 
 ---
 
-# 5. Adicionar Pi-hole + Unbound (via Docker)
+# 5. Adicionar Pi-hole + Unbound (Docker)
 
-## Visão geral
-Essa etapa cobre a instalação e configuração do Pi-hole como servidor DNS com bloqueio de anúncios e do Unbound como DNS recursivo local (resolver seguro e privativo). Ambos serão executados em containers Docker, com o Unbound atendendo localmente o Pi-hole como resolver upstream. O objetivo é garantir que:
+## Objetivo
+Instalar Pi-hole (bloqueador de anúncios e rastreadores) com Unbound (resolvedor DNS recursivo) em containers Docker separados, de forma que o Pi-hole use o Unbound como DNS interno e faça consultas diretamente à raiz da internet (sem depender de Google, Cloudflare, etc.).
 
-- O **Pi-hole** responda por requisições DNS da rede e bloqueie domínios maliciosos ou de propaganda.
-- O **Unbound** faça as consultas DNS diretamente aos servidores raiz, sem recorrer a DNS públicos como 1.1.1.1 ou 8.8.8.8.
-- A **porta 80** do host esteja dedicada ao Pi-hole (interface web), já que o blog está na porta 8888.
-
----
-
-## Estrutura de diretórios esperada
-Criaremos a seguinte estrutura para os arquivos de configuração e volumes persistentes:
-
+## Estrutura de Pastas
 ```bash
-mkdir -p ~/docker/pihole-unbound/{unbound,etc-pihole,etc-dnsmasq.d}
+# Criar estrutura de diretórios personalizada para o serviço DNS no homelab
+sudo mkdir -p /homelab/dns/unbound
+sudo mkdir -p /homelab/dns/etc-pihole
+sudo mkdir -p /homelab/dns/etc-dnsmasq.d
 ```
 
-Estrutura resultante:
-```
-~/docker/pihole-unbound/
-├── docker-compose.yml
-├── unbound/
-│   └── unbound.conf
-├── etc-pihole/        # Persistência dos dados do Pi-hole
-├── etc-dnsmasq.d/     # Config do dnsmasq (usado pelo Pi-hole)
-```
-
----
-
-## 1. Criar o arquivo `unbound.conf`
-
-Criar em `~/docker/pihole-unbound/unbound/unbound.conf` com o conteúdo:
-
+## Configuração do Unbound
+Crie o arquivo de configuração principal do Unbound:
 ```bash
-nano ~/docker/pihole-unbound/unbound/unbound.conf
+sudo nano /homelab/dns/unbound/unbound.conf
 ```
 
+Conteúdo do `unbound.conf`:
 ```conf
 server:
-  verbosity: 1
+  verbosity: 0
   interface: 0.0.0.0
   port: 5335
   do-ip4: yes
   do-udp: yes
   do-tcp: yes
-  hide-identity: yes
-  hide-version: yes
-  use-caps-for-id: yes
-  edns-buffer-size: 1232
+  root-hints: "/etc/unbound/root.hints"
   harden-glue: yes
   harden-dnssec-stripped: yes
+  use-caps-for-id: no
+  edns-buffer-size: 1232
   cache-min-ttl: 3600
   cache-max-ttl: 86400
   prefetch: yes
-  num-threads: 2
-  so-rcvbuf: 4m
-  so-sndbuf: 4m
-  val-log-level: 1
-  unwanted-reply-threshold: 10000
-
-  rrset-roundrobin: yes
-
-  trust-anchor-file: "/var/lib/unbound/root.key"
-
-  root-hints: "/var/lib/unbound/root.hints"
+  qname-minimisation: yes
+  hide-identity: yes
+  hide-version: yes
+  do-not-query-localhost: no
 
 forward-zone:
   name: "."
-  forward-tls-upstream: no
+  # Consulta direta à raiz DNS usando root.hints
+  forward-addr: 198.41.0.4       # a.root-servers.net
+  forward-addr: 199.9.14.201     # b.root-servers.net
+  forward-addr: 192.33.4.12      # c.root-servers.net
+  forward-addr: 199.7.91.13      # d.root-servers.net
 ```
 
----
-
-## 2. Criar `docker-compose.yml`
-
-Criar em `~/docker/pihole-unbound/docker-compose.yml`:
-
+> 💡 Dica: mantenha seu arquivo `root.hints` atualizado:
 ```bash
-nano ~/docker/pihole-unbound/docker-compose.yml
+wget -O /homelab/dns/unbound/root.hints https://www.internic.net/domain/named.root
 ```
 
+## docker-compose.yml
+Crie o `docker-compose.yml`:
+```bash
+sudo nano /homelab/dns/docker-compose.yml
+```
+
+Conteúdo:
 ```yaml
 version: "3"
 
 services:
-  unbound:
-    image: mvance/unbound:latest
-    container_name: unbound
-    restart: unless-stopped
-    volumes:
-      - ./unbound:/opt/unbound/etc/unbound
-    ports:
-      - "5335:5335/tcp"
-      - "5335:5335/udp"
-    networks:
-      - dns_net
-
   pihole:
-    image: pihole/pihole:latest
     container_name: pihole
-    restart: unless-stopped
+    image: pihole/pihole:latest
+    hostname: pihole
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "80:80"  # Interface web do Pi-hole
+      - "80:80"       # Web Admin
+      - "53:53/tcp"   # DNS TCP
+      - "53:53/udp"   # DNS UDP
     environment:
       TZ: "America/Sao_Paulo"
       WEBPASSWORD: "sua_senha_aqui"
       DNS1: 127.0.0.1#5335
       DNS2: 127.0.0.1#5335
     volumes:
-      - ./etc-pihole/:/etc/pihole/
-      - ./etc-dnsmasq.d/:/etc/dnsmasq.d/
-    networks:
-      - dns_net
-    cap_add:
-      - NET_ADMIN
+      - /homelab/dns/etc-pihole/:/etc/pihole/
+      - /homelab/dns/etc-dnsmasq.d/:/etc/dnsmasq.d/
+    restart: unless-stopped
+    depends_on:
+      - unbound
 
-networks:
-  dns_net:
-    driver: bridge
+  unbound:
+    container_name: unbound
+    image: mvance/unbound:latest
+    ports:
+      - "5335:5335/udp"
+      - "5335:5335/tcp"
+    volumes:
+      - /homelab/dns/unbound:/opt/unbound/etc/unbound
+    restart: unless-stopped
 ```
 
----
+## Redes e Portas
+- **Pi-hole**:
+  - Porta 80 → Interface web
+  - Porta 53 (TCP/UDP) → DNS
+- **Unbound**:
+  - Porta 5335 (TCP/UDP) → DNS recursivo local
 
-## 3. Iniciar os containers
+As portas foram definidas dessa forma para evitar conflitos com o blog que agora roda na porta `8888`, liberando a **porta 80** para o Pi-hole.
 
+A rede padrão usada é `bridge`, o que permite comunicação entre os containers e com o host. Não usamos `host` para manter o isolamento e controle fino de portas.
+
+## Inicializar o serviço
 ```bash
-cd ~/docker/pihole-unbound
+cd /homelab/dns
 sudo docker compose up -d
 ```
 
----
-
-## 4. Verificar funcionamento
-
-- Interface web do Pi-hole: `http://localhost/admin`
-- DNS do Pi-hole: porta 53 (TCP/UDP)
-- DNS do Unbound: porta 5335 (TCP/UDP)
-
-No painel do Pi-hole, vá em **Settings > DNS** e verifique que o resolver configurado é:
+Acesse a interface do Pi-hole:
 ```
-127.0.0.1#5335
+http://localhost
 ```
 
-Assim, todas as consultas da rede passam pelo Pi-hole e são resolvidas de forma segura e direta pelo Unbound (sem usar 8.8.8.8 ou 1.1.1.1).
-
----
-
-## 5. Testar resolução DNS
-
+## Testar resolução DNS com Unbound
 ```bash
-nslookup google.com 127.0.0.1
+dig google.com @127.0.0.1 -p 5335
 ```
 
----
-
-✅ Finalizado. Seu Pi-hole está rodando com Unbound local como DNS recursivo seguro. O sistema está pronto para assumir o papel de servidor DNS da sua rede!
-
-> 💡 **Dica:** Agora você pode configurar seu roteador (ou DHCP) para apontar o IP do seu homelab como servidor DNS principal.
+## Resumo
+✅ Pi-hole roda na porta 80 (livre após mudança do blog para 8888)  
+✅ Unbound consulta diretamente os root servers via `root.hints`  
+✅ Estrutura organizada em `/homelab/dns`  
+✅ Containers separados, usando rede bridge  
+✅ DNS 100% independente de serviços como Google ou Cloudflare
 
