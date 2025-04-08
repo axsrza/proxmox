@@ -168,6 +168,7 @@ services:
 
 ```bash
 cd ~/homelab/blog
+chmod +x /usr/local/bin/docker-compose
 docker-compose up -d
 ```
 
