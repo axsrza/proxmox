@@ -200,6 +200,7 @@ cloudflared tunnel login
 #### 🛠️ Criar o tunnel
 
 ```bash
+cloudflared tunnel delete homelab
 cloudflared tunnel create homelab
 ```
 
