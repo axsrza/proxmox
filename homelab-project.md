@@ -122,7 +122,32 @@ docker compose version
 #### 📜 Criar um index.html simples
 
 ```bash
-echo "<h1>Bem-vindo ao meu blog!</h1>" > ~/homelab/blog/html/index.html
+mkdir -p ~/home/homelab/blog/html
+nano ~/home/homelab/blog/html/index.html
+```
+
+##### Conteúdo do `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Azzor1337x</title>
+</head>
+<body>
+  <h1>Bem-vindo ao meu blog!</h1>
+  <p>Este é o início do meu homelab! 🚀</p>
+</body>
+</html>
+```
+
+#### 🚀 Comando para subir:
+
+```bash
+cd ~/home/homelab/blog
+docker-compose up -d
 ```
 
 #### 📜 Exemplo `docker-compose.yml`
@@ -138,13 +163,6 @@ services:
     volumes:
       - ./html:/usr/share/nginx/html:ro
     restart: unless-stopped
-```
-
-#### 🚀 Comando para subir:
-
-```bash
-cd ~/homelab/blog
-docker-compose up -d
 ```
 
 Acesse localmente via: `http://localhost:8080`
