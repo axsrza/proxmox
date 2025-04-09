@@ -87,3 +87,17 @@ docker compose up -d
 ```bash
 docker exec -it pihole pihole setpassword
 ```
+
+```bash
+docker ps -a
+docker images
+docker network ls
+docker network inspect pihole-unbound_pihole_net
+docker volume ls
+docker compose ls
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
+dig +trace google.com
+dig +dnssec +multi dnssec-failed.org @10.2.0.2
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
