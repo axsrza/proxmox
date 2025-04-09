@@ -1,27 +1,8 @@
 
-# Homelab - Pi-hole + Unbound
+# Homelab
 
 ## Descrição
-Este tutorial configura um homelab utilizando um notebook antigo com o processador AMD C-60 APU, 8 GB de RAM e um SSD de 120 GB. O sistema operacional utilizado é o Debian 12 minimal. O objetivo é configurar o Pi-hole com Unbound utilizando Docker.
-
-## Estrutura de Diretórios
-
-A estrutura de diretórios para o homelab será organizada da seguinte forma:
-
-```
-/home/homelab/
-│
-├───pihole-unbound/
-│   ├───docker-compose.yml
-│
-└───pihole-unbound-data/
-    ├───pihole/
-    │   ├───etc-pihole/        # Dados persistentes do Pi-hole
-    │   └───etc-dnsmasq.d/     # Configurações do DNSMasq
-    │
-    └───unbound/               # (Opcional) Dados persistentes do Unbound
-        └───etc-unbound/
-```
+Este tutorial configura um homelab utilizando um notebook antigo com o processador AMD C-60 APU, 8 GB de RAM e um SSD de 120 GB. O sistema operacional utilizado é o Debian 12 minimal. 
 
 ## Passos de Configuração
 
@@ -174,7 +155,3 @@ Para verificar o status dos containers de forma mais legível:
 ```bash
 docker ps --format "table {{.Names}}	{{.Status}}	{{.Ports}}"
 ```
-
----
-
-**Nota**: Essa configuração assume que você está utilizando um único servidor para executar o Pi-hole e o Unbound. Certifique-se de ajustar os arquivos conforme necessário para atender a configurações específicas do seu homelab.
