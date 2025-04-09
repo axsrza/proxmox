@@ -1,4 +1,3 @@
-
 # Homelab
 
 ## Descrição
@@ -42,14 +41,14 @@ docker compose version
 
 ### 2. Criar os Diretórios para o Pi-hole e Unbound
 
-Crie os diretórios diretamente no seu home:
+Crie os diretórios diretamente no home do usuário `homelab`:
 
 ```bash
-mkdir -p ~/pihole-unbound
-mkdir -p ~/pihole-unbound-data/pihole/etc-pihole
-mkdir -p ~/pihole-unbound-data/pihole/etc-dnsmasq.d
-mkdir -p ~/pihole-unbound-data/unbound/etc-unbound
-cd ~/pihole-unbound
+mkdir -p ~homelab/pihole-unbound
+mkdir -p ~homelab/pihole-unbound-data/pihole/etc-pihole
+mkdir -p ~homelab/pihole-unbound-data/pihole/etc-dnsmasq.d
+mkdir -p ~homelab/pihole-unbound-data/unbound/etc-unbound
+cd ~homelab/pihole-unbound
 ```
 
 ### 3. Criar o arquivo `docker-compose.yml`
@@ -155,3 +154,4 @@ Para verificar o status dos containers de forma mais legível:
 ```bash
 docker ps --format "table {{.Names}}	{{.Status}}	{{.Ports}}"
 ```
+
