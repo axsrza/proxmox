@@ -116,8 +116,6 @@ nano docker-compose.yml
 **Conteúdo sugerido para `docker-compose.yml`:**
 
 ```yaml
-# docker-compose.yml - Pi-hole
-# Comentário: Substitua "WEBPASSWORD" por uma senha segura
 version: "3"
 
 services:
@@ -126,7 +124,7 @@ services:
     image: pihole/pihole:latest
     environment:
       TZ: "America/Sao_Paulo"
-      WEBPASSWORD: "sua_senha_aqui"
+      WEBPASSWORD: ""
     volumes:
       - ./etc-pihole:/etc/pihole
       - ./etc-dnsmasq.d:/etc/dnsmasq.d
@@ -145,7 +143,6 @@ services:
 docker compose up -d
 ```
 
-⚠️ **Aviso:** O Docker emitirá um aviso informando que a chave `version` no YAML está obsoleta. Isso é esperado e seguro ignorar por enquanto.
 
 #### Alterar a senha do Pi-hole após o primeiro deploy (opcional e seguro):
 
@@ -203,7 +200,6 @@ server:
   qname-minimisation: yes
   minimal-responses: yes
 
-# forward-zone removido para habilitar resolução recursiva direta (root DNS)
 ```
 
 <!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. Também foi removida duplicação da diretiva rrset-roundrobin. -->
@@ -215,7 +211,6 @@ nano docker-compose.yml
 ```
 
 ```yaml
-# docker-compose.yml - Unbound
 version: "3"
 
 services:
@@ -277,75 +272,28 @@ Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução re
 
 ## 🔍 Docker - Estado atual do ambiente
 
-> _📝 Adição comentada em 08/04/2025: Seção atualizada para incluir o container `unbound` e os comandos correspondentes._
 
 ### Comandos úteis para inspecionar o ambiente Docker:
 
 ```bash
-# Lista todos os containers (em execução ou não)
 docker ps -a
-
-# Mostra todas as imagens disponíveis localmente
 docker images
-
-# Lista todas as redes Docker
 docker network ls
-
-# Inspeciona a rede 'pihole_default'
 docker network inspect pihole_default
-
-# Lista todos os volumes Docker (não estamos usando volumes no momento)
 docker volume ls
-
-# Lista todos os projetos Docker Compose detectados
 docker compose ls
-
-# Mostra o IP do container Pi-hole
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
-
-# Mostra o IP do container Unbound
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
-
-# Verifica resolução recursiva completa com rastreamento (útil para debug)
 dig +trace google.com
-
-# Verifica se DNSSEC está funcionando corretamente (espera-se SERVFAIL)
 dig +dnssec +multi dnssec-failed.org @172.18.0.3
-
-# Lista containers e seus status resumidos
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
-<!-- Comentário: Em 08/04/2025, adicionados comandos para validação DNSSEC com dig e listagem resumida de containers com status/portas. -->
-
-### Containers ativos:
-
-```bash
-CONTAINER ID   IMAGE                   COMMAND         STATUS                 NAMES
-942e7d8d6eb2   mvance/unbound:latest   "/unbound.sh"   Up (healthy)          unbound
-e97f8e2ebab4   pihole/pihole:latest    "start.sh"      Up (healthy)          pihole
-```
-
-### IPs dos containers na rede `pihole_default`:
-
-- `pihole`: `172.18.0.2`
-- `unbound`: `172.18.0.3`
 
 ### Teste de resolução DNS usando Unbound:
 
 ```bash
-# Consulta DNS diretamente ao IP do container Unbound
 dig @172.18.0.3 google.com
 ```
 
-Exemplo de saída:
-
-```text
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR
-;; ANSWER SECTION:
-google.com.   280   IN   A   172.217.29.46
-;; SERVER: 172.18.0.3#53 (UDP)
-```
-
-🟢 Indica que o Unbound está respondendo corretamente.
 
