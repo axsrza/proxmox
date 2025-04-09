@@ -1,5 +1,5 @@
 ## Tenho um notebook antigo que vou transformar em um homelab, ele é um AMD C-60 APU with Radeon(tm) HD Graphics  CPU @ 1.0GHz, com duas memorias de 4gb e um ssd de 120gb.
-Acabo de formata-lo e instalei o Debian 12 minimal, no momento da instalação selecionei apenas ssh e standard, ao final da instação, começo com os comandos abaixo:
+# Acabo de formata-lo e instalei o Debian 12 minimal, no momento da instalação selecionei apenas ssh e standard, ao final da instação, começo com os comandos abaixo:
 
 ```bash
 ip -c a
