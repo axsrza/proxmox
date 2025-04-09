@@ -247,3 +247,12 @@ cloudflared tunnel run blog
 ```bash
 cloudflared service install
 ```
+
+
+#### :tada: Rodar o túnel manualmente
+
+```bash
+sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt autoclean
+```
+
+
