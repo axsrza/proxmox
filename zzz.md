@@ -138,3 +138,107 @@ dig +trace google.com
 dig +dnssec +multi dnssec-failed.org @10.2.0.2
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
+
+#### 📁 Estrutura do diretório:
+
+```bash
+mkdir -p ~homelab/blog/html
+```
+
+#### 📜 Criar um index.html simples
+
+```bash
+nano ~homelab/blog/html/index.html
+```
+
+##### Conteúdo do `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>azzor1337x</title>
+</head>
+<body>
+  <h1>azzor1337x</h1>
+  <p>Hello World!</p>
+</body>
+</html>
+```
+
+#### 📜 Criar um `docker-compose.yml`
+
+```bash
+nano ~homelab/blog/docker-compose.yml
+```
+
+##### Conteúdo do `docker-compose.yml`
+
+```yaml
+version: '3'
+
+services:
+  blog:
+    image: nginx:alpine
+    ports:
+      - "8888:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+```
+
+#### 🚀 Subir o container
+
+```bash
+cd ~homelab/blog
+docker-compose up -d
+```
+
+#### 📥 Instalar `cloudflared`
+
+```bash
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
+rm cloudflared-linux-amd64.deb
+
+apt update
+apt install cloudflared
+```
+
+#### 🔐 Autenticar com Cloudflare
+
+```bash
+cloudflared tunnel login
+```
+
+#### 🛠️ Criar o túnel
+
+```bash
+cloudflared tunnel delete homelab
+cloudflared tunnel create homelab  # ID será gerado automaticamente
+```
+
+#### 📁 Criar o arquivo de configuração
+
+```bash
+nano /root/.cloudflared/config.yml
+```
+
+##### Exemplo de `config.yml`
+
+```yaml
+tunnel: homelab
+credentials-file: /root/.cloudflared/INSERIR_ID_DO_TUNNEL.json
+
+ingress:
+  - hostname: azzor1337x.shop
+    service: http://127.0.0.1:8888
+  - service: http_status:404
+```
+
+#### 🚀 Rodar o túnel manualmente
+
+```bash
+cloudflared tunnel run homelab
+```
