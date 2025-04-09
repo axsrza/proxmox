@@ -238,7 +238,7 @@ ingress:
   - service: http_status:404
 ```
 
-#### 🚀 Rodar o túnel manualmente
+####  Rodar o túnel manualmente
 
 ```bash
 cloudflared tunnel run blog
@@ -249,7 +249,7 @@ cloudflared service install
 ```
 
 
-#### :tada: Rodar o túnel manualmente
+#### 🚀 att tudo
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt autoclean
