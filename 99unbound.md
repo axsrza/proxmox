@@ -1,6 +1,20 @@
-# Projeto Homelab - Azzor1337x
+# Homelab Setup
+
+## Projeto Homelab - Azzor1337x
 
 Transformando um notebook antigo em um homelab funcional, moderno e enxuto 🚀
+
+---
+
+## 📑 Índice
+
+- [🧭 Primeiros passos após instalação](#-primeiros-passos-após-instalação)
+- [1. Docker Engine](#1-instalar-docker-engine-e-docker-compose)
+- [2. Docker Compose standalone](#2-instalar-docker-compose-standalone)
+- [3. Pi-hole](#3-instalar-pi-hole-via-docker)
+- [4. Unbound](#4-instalar-unbound-via-docker)
+- [5. Configurar Pi-hole com Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
+- [🔍 Docker - Estado atual do ambiente](#docker---estado-atual-do-ambiente)
 
 ---
 
@@ -188,12 +202,11 @@ server:
 
   qname-minimisation: yes
   minimal-responses: yes
-  rrset-roundrobin: yes
 
 # forward-zone removido para habilitar resolução recursiva direta (root DNS)
 ```
 
-<!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. -->
+<!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. Também foi removida duplicação da diretiva rrset-roundrobin. -->
 
 #### Criar o arquivo `docker-compose.yml`:
 
@@ -262,7 +275,7 @@ Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução re
 
 ---
 
-## Docker - Estado atual do ambiente
+## 🔍 Docker - Estado atual do ambiente
 
 > _📝 Adição comentada em 08/04/2025: Seção atualizada para incluir o container `unbound` e os comandos correspondentes._
 
@@ -292,7 +305,18 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pih
 
 # Mostra o IP do container Unbound
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
+
+# Verifica resolução recursiva completa com rastreamento (útil para debug)
+dig +trace google.com
+
+# Verifica se DNSSEC está funcionando corretamente (espera-se SERVFAIL)
+dig +dnssec +multi dnssec-failed.org @172.18.0.3
+
+# Lista containers e seus status resumidos
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
+
+<!-- Comentário: Em 08/04/2025, adicionados comandos para validação DNSSEC com dig e listagem resumida de containers com status/portas. -->
 
 ### Containers ativos:
 
