@@ -1,16 +1,13 @@
-# 🏠 Homelab Setup com Pi-hole e Unbound (via Docker)
-
-<!-- Comentário: Documento iniciado em 08/04/2025 para registrar passo a passo da montagem do homelab. Atualizado em 09/04/2025 com rede macvlan e recomendações de segurança. -->
+# Homelab Setup
 
 ## 📋 Índice
 
-1. [Primeiros passos após instalação](#-primeiros-passos-após-instalação)
-2. [Instalar Docker e Docker Compose](#1-instalar-docker-engine-e-docker-compose)
-3. [Pi-hole via Docker + macvlan](#3-instalar-pi-hole-via-docker)
-4. [Unbound via Docker](#4-instalar-unbound-via-docker)
-5. [Configurar Pi-hole para usar Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
-6. [Segurança e arquitetura](#segurança-e-arquitetura)
-7. [Comandos úteis](#-docker---estado-atual-do-ambiente)
+- [🧭 Primeiros passos após instalação](#-primeiros-passos-ap%C3%B3s-instala%C3%A7%C3%A3o)
+- [🐳 Instalação do Docker e Docker Compose](#1-instalar-docker-engine-e-docker-compose)
+- [📦 Instalar o Pi-hole via Docker](#3-instalar-pi-hole-via-docker)
+- [🔐 Instalar o Unbound via Docker](#4-instalar-unbound-via-docker)
+- [🔗 Conectar Pi-hole ao Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
+- [🔍 Estado atual do ambiente Docker](#-docker---estado-atual-do-ambiente)
 
 ---
 
@@ -47,7 +44,7 @@ timedatectl  # Verificar se aplicou corretamente
 
 ## 1. Instalar Docker Engine e Docker Compose
 
-📌 Fonte: https://docs.docker.com/engine/install/debian/
+#### 📌 Fonte: https://docs.docker.com/engine/install/debian/
 
 ```bash
 # Remover pacotes antigos
@@ -72,16 +69,23 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Testar instalação
-docker run hello-world
+sudo docker run hello-world
 ```
+
+---
 
 ## 2. Instalar Docker Compose (standalone)
 
-📌 Fonte: https://docs.docker.com/compose/install/standalone/
+#### 📌 Fonte: https://docs.docker.com/compose/install/standalone/
 
 ```bash
+# Baixar a versão standalone do Docker Compose
 curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+
+# Criar link simbólico
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Verificar versão instalada
 docker compose version
 ```
 
@@ -89,30 +93,20 @@ docker compose version
 
 ## 3. Instalar Pi-hole via Docker
 
-### Criar rede `macvlan` para acesso direto na LAN
-
-```bash
-# Substituir eth0 conforme necessário (ver com `ip a`)
-parent_iface=enx00e04c680094
-
-# Criar rede macvlan para Pi-hole ter IP próprio
-sudo docker network create -d macvlan \
-  --subnet=192.168.1.0/24 \
-  --gateway=192.168.1.1 \
-  -o parent=$parent_iface \
-  pihole_macvlan
-```
-
-<!-- Comentário: Adicionado em 09/04/2025 rede macvlan para Pi-hole, essencial para funcionar como DHCP e ter IP fixo na LAN. -->
-
-### Criar diretório para o Pi-hole:
+#### Criar diretório para o Pi-hole:
 
 ```bash
 mkdir -p /opt/homelab/pihole
 cd /opt/homelab/pihole
 ```
 
-### Criar `docker-compose.yml`:
+#### Criar arquivo de configuração do Docker Compose:
+
+```bash
+nano docker-compose.yml
+```
+
+**Conteúdo sugerido para `docker-compose.yml` com `macvlan`:**
 
 ```yaml
 version: "3"
@@ -129,29 +123,52 @@ services:
       - ./etc-dnsmasq.d:/etc/dnsmasq.d
     restart: unless-stopped
     networks:
-      pihole_macvlan:
-        ipv4_address: 192.168.1.10
+      macvlan_net:
+        ipv4_address: 192.168.1.99
 
 networks:
-  pihole_macvlan:
-    external: true
+  macvlan_net:
+    driver: macvlan
+    driver_opts:
+      parent: enx00e04c680094  # Interface física detectada com `ip a`
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
 ```
+
+<!-- Comentário: Em 09/04/2025, atualizado para utilizar rede macvlan e IP fixo 192.168.1.99 no container Pi-hole. -->
+
+#### Subir o container:
 
 ```bash
 docker compose up -d
-docker exec -it pihole pihole setpassword  # Definir senha via CLI (opcional)
+```
+
+#### Alterar a senha do Pi-hole após o primeiro deploy (opcional e seguro):
+
+```bash
+docker exec -it pihole pihole setpassword
 ```
 
 ---
 
 ## 4. Instalar Unbound via Docker
 
+#### Criar estrutura de diretórios:
+
 ```bash
 mkdir -p /opt/homelab/unbound
 cd /opt/homelab/unbound
 ```
 
-### Criar `unbound.conf`:
+#### Criar o arquivo `unbound.conf` com resolução recursiva (sem forwarders):
+
+```bash
+nano unbound.conf
+```
+
+**Conteúdo sugerido:**
 
 ```conf
 server:
@@ -185,7 +202,13 @@ server:
   minimal-responses: yes
 ```
 
-### Criar `docker-compose.yml`:
+<!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. -->
+
+#### Criar o arquivo `docker-compose.yml`:
+
+```bash
+nano docker-compose.yml
+```
 
 ```yaml
 version: "3"
@@ -206,6 +229,8 @@ networks:
     external: true
 ```
 
+#### Subir o container:
+
 ```bash
 docker compose up -d
 ```
@@ -214,41 +239,54 @@ docker compose up -d
 
 ## 5. Configurar o Pi-hole para usar o Unbound
 
-Na interface web do Pi-hole em `http://192.168.1.10/admin`:
+Acesse a interface web do Pi-hole em `http://192.168.1.99/admin`:
 
-1. Acesse **Settings > DNS**
-2. Em "Custom 1 (IPv4)", coloque:
+1. Vá em **Settings > DNS**
+2. Em "Custom 1 (IPv4)", coloque o IP do container `unbound`, por exemplo:
+
+   ```text
+   172.18.0.2#53
    ```
-   172.18.0.3#53
-   ```
-3. Desmarque todos os servidores DNS públicos
+3. Desmarque todos os outros servidores DNS públicos (Cloudflare, Google, etc)
 4. Clique em **Save**
 
----
+Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução recursiva.
 
-## 🔐 Segurança e arquitetura
-
-- Pi-hole com `macvlan` = visível na LAN com IP 192.168.1.10
-- Unbound acessível **somente** via rede interna do Docker
-- Pi-hole faz todo o DNS e DHCP (quando ativado), sem dependência de servidores externos
-- Recomendação: manter firewall do host fechado (iptables ou UFW), exceto para DHCP e acesso ao painel web
+<!-- Comentário: Em 09/04/2025, ajustado IP do Unbound para 172.18.0.2 após inspeção manual do container. -->
 
 ---
 
 ## 🔍 Docker - Estado atual do ambiente
 
+### Comandos úteis para inspecionar o ambiente Docker:
+
 ```bash
 docker ps -a
 docker images
 docker network ls
-docker network inspect pihole_macvlan
+docker network inspect pihole_default
+docker volume ls
 docker compose ls
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
-dig @172.18.0.3 google.com
 dig +trace google.com
-dig +dnssec +multi dnssec-failed.org @172.18.0.3
+dig +dnssec +multi dnssec-failed.org @172.18.0.2
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
+### Teste de resolução DNS usando Unbound:
+
+```bash
+dig @172.18.0.2 google.com
+```
+
+<!-- Comentário: Em 09/04/2025, atualizado endereço do Unbound para 172.18.0.2. -->
+
 ---
+
+## 💡 Observação sobre DHCP
+
+Quando o Pi-hole for ativado como servidor DHCP, ele **não muda o próprio IP** configurado no `docker-compose.yml`. O IP fixo 192.168.1.99 continuará sendo utilizado, mesmo com o serviço DHCP ativo.
+
+<!-- Comentário: Esclarecido em 09/04/2025 que o Pi-hole com IP fixo via `macvlan` não perde o IP ao assumir papel de servidor DHCP. -->
 
