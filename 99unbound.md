@@ -24,6 +24,15 @@ Logar como root com a senha criada acima:
 su
 ```
 
+### ⏰ Definir fuso horário para América/São_Paulo
+
+```bash
+timedatectl set-timezone America/Sao_Paulo
+timedatectl  # Verificar se aplicou corretamente
+```
+
+<!-- Comentário: Adicionado em 08/04/2025 o comando para definir o fuso horário local. -->
+
 ---
 
 ### 1. Instalar Docker Engine e Docker Compose
@@ -132,18 +141,16 @@ docker exec -it pihole pihole setpassword
 
 ---
 
-### 4. Instalar e configurar Unbound via Docker
+### 4. Instalar Unbound via Docker
 
-> _📝 Reorganizado em 08/04/2025: Ordem ajustada para seguir o fluxo lógico de criação e validação do container._
-
-#### 🧱 Estrutura de diretórios sugerida
+#### Criar estrutura de diretórios:
 
 ```bash
 mkdir -p /opt/homelab/unbound
 cd /opt/homelab/unbound
 ```
 
-#### 📝 Criar `unbound.conf`
+#### Criar o arquivo `unbound.conf` com resolução recursiva (sem forwarders):
 
 ```bash
 nano unbound.conf
@@ -183,21 +190,16 @@ server:
   minimal-responses: yes
   rrset-roundrobin: yes
 
-forward-zone:
-  name: "."
-  forward-addr: 1.1.1.1
-  forward-addr: 1.0.0.1
+# forward-zone removido para habilitar resolução recursiva direta (root DNS)
 ```
 
-💬 Comentário: O bloco `forward-zone` pode ser removido se quiser usar resolução recursiva completa a partir da raiz (root DNS).
+<!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. -->
 
-#### 📦 Criar `docker-compose.yml`
+#### Criar o arquivo `docker-compose.yml`:
 
 ```bash
 nano docker-compose.yml
 ```
-
-**Conteúdo sugerido:**
 
 ```yaml
 # docker-compose.yml - Unbound
@@ -210,6 +212,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./unbound.conf:/etc/unbound/unbound.conf:ro
+      - ./root.hints:/etc/unbound/root.hints:ro
     networks:
       - pihole_default
 
@@ -218,34 +221,44 @@ networks:
     external: true
 ```
 
-#### 🚀 Subir o container
+#### Subir o container:
 
 ```bash
 docker compose up -d
 ```
 
-#### 🔍 Verificar IP do container `unbound`
+---
+
+### 🔄 Atualização automática diária do arquivo `root.hints`
 
 ```bash
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
+crontab -e
 ```
 
-#### 🧪 Testar resolução DNS usando `dig`
+Adicione ao final:
 
-```bash
-dig @172.18.0.3 google.com
+```cron
+0 0 * * * curl -o /opt/homelab/unbound/root.hints https://www.internic.net/domain/named.cache
 ```
 
-Exemplo de saída:
+<!-- Comentário: Adicionado cron job diário às 00:00 para atualizar root.hints em 08/04/2025 -->
 
-```text
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR
-;; ANSWER SECTION:
-google.com.   280   IN   A   172.217.29.46
-;; SERVER: 172.18.0.3#53 (UDP)
-```
+---
 
-🟢 Indica que o Unbound está respondendo corretamente.
+### 5. Configurar o Pi-hole para usar o Unbound
+
+Acesse a interface web do Pi-hole em `http://<ip_do_homelab>/admin`:
+
+1. Vá em **Settings > DNS**
+2. Em "Custom 1 (IPv4)", coloque o IP do container `unbound`, por exemplo:
+   
+   ```text
+   172.18.0.3#53
+   ```
+3. Desmarque todos os outros servidores DNS públicos (Cloudflare, Google, etc)
+4. Clique em **Save**
+
+Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução recursiva.
 
 ---
 
@@ -293,4 +306,22 @@ e97f8e2ebab4   pihole/pihole:latest    "start.sh"      Up (healthy)          pih
 
 - `pihole`: `172.18.0.2`
 - `unbound`: `172.18.0.3`
+
+### Teste de resolução DNS usando Unbound:
+
+```bash
+# Consulta DNS diretamente ao IP do container Unbound
+dig @172.18.0.3 google.com
+```
+
+Exemplo de saída:
+
+```text
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR
+;; ANSWER SECTION:
+google.com.   280   IN   A   172.217.29.46
+;; SERVER: 172.18.0.3#53 (UDP)
+```
+
+🟢 Indica que o Unbound está respondendo corretamente.
 
