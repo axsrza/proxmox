@@ -192,6 +192,7 @@ services:
 
 ```bash
 cd ~homelab/blog
+chmod +x /usr/local/bin/docker-compose
 docker-compose up -d
 ```
 
@@ -215,8 +216,8 @@ cloudflared tunnel login
 #### 🛠️ Criar o túnel
 
 ```bash
-cloudflared tunnel delete homelab
-cloudflared tunnel create homelab  # ID será gerado automaticamente
+cloudflared tunnel delete blog
+cloudflared tunnel create blog  # ID será gerado automaticamente
 ```
 
 #### 📁 Criar o arquivo de configuração
@@ -228,7 +229,7 @@ nano /root/.cloudflared/config.yml
 ##### Exemplo de `config.yml`
 
 ```yaml
-tunnel: homelab
+tunnel: blog
 credentials-file: /root/.cloudflared/INSERIR_ID_DO_TUNNEL.json
 
 ingress:
@@ -240,5 +241,9 @@ ingress:
 #### 🚀 Rodar o túnel manualmente
 
 ```bash
-cloudflared tunnel run homelab
+cloudflared tunnel run blog
+```
+
+```bash
+cloudflared service install
 ```
