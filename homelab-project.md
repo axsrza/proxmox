@@ -1,21 +1,17 @@
-# Homelab Setup
+# 🧠 Homelab Setup
 
-## Projeto Homelab - Azzor1337x
+## 📚 Índice
 
-Transformando um notebook antigo em um homelab funcional, moderno e enxuto 🚀
-
----
-
-## 📑 Índice
-
-- [🧭 Primeiros passos após instalação](#-primeiros-passos-após-instalação)
-- [1. Docker Engine](#1-instalar-docker-engine-e-docker-compose)
-- [2. Docker Compose standalone](#2-instalar-docker-compose-standalone)
-- [3. Pi-hole](#3-instalar-pi-hole-via-docker)
-- [4. Unbound](#4-instalar-unbound-via-docker)
-- [5. Configurar Pi-hole com Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
-- [🔍 Docker - Estado atual do ambiente](#docker---estado-atual-do-ambiente)
-- [🌐 Blog pessoal com Nginx e Cloudflare Tunnel](#-subir-blog-pessoal-com-nginx-exemplo-inicial-com-html-estático)
+1. [Primeiros passos após instalação](#-primeiros-passos-após-instalação)
+2. [Instalar Docker Engine e Docker Compose](#1-instalar-docker-engine-e-docker-compose)
+3. [Instalar Docker Compose (standalone)](#2-instalar-docker-compose-standalone)
+4. [Instalar Pi-hole via Docker](#3-instalar-pi-hole-via-docker)
+5. [Instalar Unbound via Docker](#4-instalar-unbound-via-docker)
+6. [Configurar o Pi-hole para usar o Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
+7. [Docker - Estado atual do ambiente](#-docker---estado-atual-do-ambiente)
+8. [Subir blog pessoal com Nginx](#-subir-blog-pessoal-com-nginx-exemplo-inicial-com-html-estático)
+9. [Configurar Cloudflare Tunnel](#-configurar-cloudflare-tunnel)
+10. [Planejamento: VPN no homelab (futuro)](#-planejamento-vpn-no-homelab-futuro)
 
 ---
 
@@ -428,4 +424,17 @@ cloudflared service install
 ```
 
 ---
+
+### 🧱 Planejamento: VPN no homelab (futuro)
+
+- Objetivo: adicionar uma VPN segura ao homelab para acesso remoto seguro à rede local e aos serviços internos (ex: Pi-hole, blog, etc.)
+- Prioridade: segurança, isolamento, simplicidade de configuração
+- Opções consideradas:
+  - WireGuard via Docker (simples, leve, rápido)
+  - OpenVPN (mais tradicional, mas mais complexo)
+  - Tailscale (mesh VPN com autenticação via conta; requer dependência externa)
+- Integração planejada: Pi-hole poderá filtrar DNS para clientes VPN
+- Ainda em análise se a VPN será containerizada ou instalada diretamente no host
+
+<!-- Comentário: Em 08/04/2025 foi adicionada uma seção para planejamento futuro da VPN no homelab. Nenhuma VPN está em funcionamento neste momento. -->
 
