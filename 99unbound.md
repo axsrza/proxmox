@@ -1,23 +1,3 @@
-# Homelab Setup
-
-## Projeto Homelab - Azzor1337x
-
-Transformando um notebook antigo em um homelab funcional, moderno e enxuto 🚀
-
----
-
-## 📑 Índice
-
-- [🧭 Primeiros passos após instalação](#-primeiros-passos-após-instalação)
-- [1. Docker Engine](#1-instalar-docker-engine-e-docker-compose)
-- [2. Docker Compose standalone](#2-instalar-docker-compose-standalone)
-- [3. Pi-hole](#3-instalar-pi-hole-via-docker)
-- [4. Unbound](#4-instalar-unbound-via-docker)
-- [5. Configurar Pi-hole com Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
-- [🔍 Docker - Estado atual do ambiente](#docker---estado-atual-do-ambiente)
-
----
-
 ## 🧭 Primeiros passos após instalação
 
 Após finalizar a instalação do Debian 12 minimal, no terminal local logar com o usuário criado, verifique o IP e Interface de Rede:
@@ -143,7 +123,6 @@ services:
 docker compose up -d
 ```
 
-
 #### Alterar a senha do Pi-hole após o primeiro deploy (opcional e seguro):
 
 ```bash
@@ -199,7 +178,6 @@ server:
 
   qname-minimisation: yes
   minimal-responses: yes
-
 ```
 
 <!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. Também foi removida duplicação da diretiva rrset-roundrobin. -->
@@ -237,29 +215,13 @@ docker compose up -d
 
 ---
 
-### 🔄 Atualização automática diária do arquivo `root.hints`
-
-```bash
-crontab -e
-```
-
-Adicione ao final:
-
-```cron
-0 0 * * * curl -o /opt/homelab/unbound/root.hints https://www.internic.net/domain/named.cache
-```
-
-<!-- Comentário: Adicionado cron job diário às 00:00 para atualizar root.hints em 08/04/2025 -->
-
----
-
 ### 5. Configurar o Pi-hole para usar o Unbound
 
 Acesse a interface web do Pi-hole em `http://<ip_do_homelab>/admin`:
 
 1. Vá em **Settings > DNS**
 2. Em "Custom 1 (IPv4)", coloque o IP do container `unbound`, por exemplo:
-   
+
    ```text
    172.18.0.3#53
    ```
@@ -271,7 +233,6 @@ Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução re
 ---
 
 ## 🔍 Docker - Estado atual do ambiente
-
 
 ### Comandos úteis para inspecionar o ambiente Docker:
 
@@ -289,11 +250,11 @@ dig +dnssec +multi dnssec-failed.org @172.18.0.3
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
-
 ### Teste de resolução DNS usando Unbound:
 
 ```bash
 dig @172.18.0.3 google.com
 ```
 
+---
 
