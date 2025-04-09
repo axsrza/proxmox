@@ -1,6 +1,21 @@
-# Projeto Homelab - Azzor1337x
+# Homelab Setup
+
+## Projeto Homelab - Azzor1337x
 
 Transformando um notebook antigo em um homelab funcional, moderno e enxuto 🚀
+
+---
+
+## 📑 Índice
+
+- [🧭 Primeiros passos após instalação](#-primeiros-passos-após-instalação)
+- [1. Docker Engine](#1-instalar-docker-engine-e-docker-compose)
+- [2. Docker Compose standalone](#2-instalar-docker-compose-standalone)
+- [3. Pi-hole](#3-instalar-pi-hole-via-docker)
+- [4. Unbound](#4-instalar-unbound-via-docker)
+- [5. Configurar Pi-hole com Unbound](#5-configurar-o-pi-hole-para-usar-o-unbound)
+- [🔍 Docker - Estado atual do ambiente](#docker---estado-atual-do-ambiente)
+- [🌐 Blog pessoal com Nginx e Cloudflare Tunnel](#-subir-blog-pessoal-com-nginx-exemplo-inicial-com-html-estático)
 
 ---
 
@@ -24,40 +39,16 @@ Logar como root com a senha criada acima:
 su
 ```
 
----
+### ⏰ Definir fuso horário para América/São_Paulo
 
-## 🖥️ Hardware
+```bash
+timedatectl set-timezone America/Sao_Paulo
+timedatectl  # Verificar se aplicou corretamente
+```
 
-- Notebook com:
-  - CPU: AMD C-60 APU with Radeon HD Graphics @ 1.0GHz
-  - RAM: 8GB (2x4GB)
-  - SSD: 120GB
-
-## 🐧 Sistema Operacional
-
-- **Debian 12** instalado com:
-  - SSH Server
-  - Standard System Utilities
+<!-- Comentário: Adicionado em 08/04/2025 o comando para definir o fuso horário local. -->
 
 ---
-
-## 🧠 Objetivo
-
-Criar um homelab funcional com os seguintes serviços:
-
-- [ ] DNS local com **Unbound**
-- [ ] Bloqueador de anúncios com **Pi-hole**
-- [ ] Servidor DHCP local (integrado com Pi-hole)
-- [ ] Blog pessoal online em **azzor1337x.shop**
-- [ ] Exposição segura via **Cloudflare Tunnel**
-- [ ] Acesso remoto via **Tailscale**
-- [ ] Monitoramento local com **btop**
-- [ ] Firewall moderno com **nftables**
-- [ ] Containerização de tudo via **Docker + Docker Compose**
-
----
-
-## 📦 Etapas do Projeto
 
 ### 1. Instalar Docker Engine e Docker Compose
 
@@ -108,7 +99,205 @@ docker compose version
 
 ---
 
-### 3. Subir blog pessoal com Nginx (exemplo inicial com HTML estático)
+### 3. Instalar Pi-hole via Docker
+
+#### Criar diretório para o Pi-hole:
+
+```bash
+mkdir -p /opt/homelab/pihole
+cd /opt/homelab/pihole
+```
+
+#### Criar arquivo de configuração do Docker Compose:
+
+```bash
+nano docker-compose.yml
+```
+
+**Conteúdo sugerido para `docker-compose.yml`:**
+
+```yaml
+version: "3"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    environment:
+      TZ: "America/Sao_Paulo"
+      WEBPASSWORD: ""
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    restart: unless-stopped
+```
+
+#### Subir o container:
+
+```bash
+docker compose up -d
+```
+
+#### Alterar a senha do Pi-hole após o primeiro deploy (opcional e seguro):
+
+```bash
+docker exec -it pihole pihole setpassword
+```
+
+---
+
+### 4. Instalar Unbound via Docker
+
+#### Criar estrutura de diretórios:
+
+```bash
+mkdir -p /opt/homelab/unbound
+cd /opt/homelab/unbound
+```
+
+#### Criar o arquivo `unbound.conf` com resolução recursiva (sem forwarders):
+
+```bash
+nano unbound.conf
+```
+
+**Conteúdo sugerido:**
+
+```conf
+server:
+  verbosity: 1
+  interface: 0.0.0.0
+  access-control: 0.0.0.0/0 allow
+  do-ip4: yes
+  do-udp: yes
+  do-tcp: yes
+  root-hints: "/etc/unbound/root.hints"
+  harden-glue: yes
+  harden-dnssec-stripped: yes
+  use-caps-for-id: yes
+  edns-buffer-size: 1232
+  cache-min-ttl: 3600
+  cache-max-ttl: 86400
+  prefetch: yes
+  num-threads: 2
+  so-rcvbuf: 1m
+  so-sndbuf: 1m
+
+  unwanted-reply-threshold: 10000000
+  rrset-roundrobin: yes
+
+  hide-identity: yes
+  hide-version: yes
+  identity: "DNS"
+  version: "1.0"
+
+  qname-minimisation: yes
+  minimal-responses: yes
+```
+
+<!-- Comentário: Em 08/04/2025, removido o bloco `forward-zone` para habilitar resolução DNS recursiva autônoma usando os root servers. Também foi removida duplicação da diretiva rrset-roundrobin. -->
+
+#### Criar o arquivo `docker-compose.yml`:
+
+```bash
+nano docker-compose.yml
+```
+
+```yaml
+version: "3"
+
+services:
+  unbound:
+    container_name: unbound
+    image: mvance/unbound:latest
+    restart: unless-stopped
+    volumes:
+      - ./unbound.conf:/etc/unbound/unbound.conf:ro
+      - ./root.hints:/etc/unbound/root.hints:ro
+    networks:
+      - pihole_default
+
+networks:
+  pihole_default:
+    external: true
+```
+
+#### Subir o container:
+
+```bash
+docker compose up -d
+```
+
+---
+
+### 🔄 Atualização automática diária do arquivo `root.hints`
+
+```bash
+crontab -e
+```
+
+Adicione ao final:
+
+```cron
+0 0 * * * curl -o /opt/homelab/unbound/root.hints https://www.internic.net/domain/named.cache
+```
+
+<!-- Comentário: Adicionado cron job diário às 00:00 para atualizar root.hints em 08/04/2025 -->
+
+---
+
+### 5. Configurar o Pi-hole para usar o Unbound
+
+Acesse a interface web do Pi-hole em `http://<ip_do_homelab>/admin`:
+
+1. Vá em **Settings > DNS**
+2. Em "Custom 1 (IPv4)", coloque o IP do container `unbound`, por exemplo:
+
+   ```text
+   172.18.0.3#53
+   ```
+3. Desmarque todos os outros servidores DNS públicos (Cloudflare, Google, etc)
+4. Clique em **Save**
+
+Depois disso, o Pi-hole usará o Unbound como seu *resolver*, com resolução recursiva.
+
+---
+
+## 🔍 Docker - Estado atual do ambiente
+
+### Comandos úteis para inspecionar o ambiente Docker:
+
+```bash
+docker ps -a
+docker images
+docker network ls
+docker network inspect pihole_default
+docker volume ls
+docker compose ls
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
+dig +trace google.com
+dig +dnssec +multi dnssec-failed.org @172.18.0.3
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
+
+### Teste de resolução DNS usando Unbound:
+
+```bash
+dig @172.18.0.3 google.com
+```
+
+---
+
+<!-- Comentário: Adicionado em 08/04/2025 a configuração de Nginx com HTML estático, além do túnel via Cloudflare usando domínio personalizado. -->
+
+### 🌐 Subir blog pessoal com Nginx (exemplo inicial com HTML estático)
 
 #### 📁 Estrutura do diretório:
 
@@ -148,7 +337,7 @@ nano /homelab/blog/html/index.html
 nano /homelab/blog/docker-compose.yml
 ```
 
-#### 📜 Exemplo `docker-compose.yml`
+##### Conteúdo do `docker-compose.yml`
 
 ```yaml
 version: '3'
@@ -163,7 +352,7 @@ services:
     restart: unless-stopped
 ```
 
-#### 🚀 Comando para subir:
+#### 🚀 Subir o container
 
 ```bash
 cd /homelab/blog
@@ -171,15 +360,18 @@ chmod +x /usr/local/bin/docker-compose
 docker-compose up -d
 ```
 
-Acesse localmente via: `http://localhost:8888`
+📌 Acesse o blog:
+
+- Localmente via: http://localhost:8888  
+- Externamente via Cloudflare Tunnel: https://azzor1337x.shop
 
 ---
 
-### 4. Configurar Cloudflare Tunnel
+### 🔒 Configurar Cloudflare Tunnel
 
 #### 📌 Fonte: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/
 
-#### 📜 Instalar Cloudflared
+#### 📥 Instalar `cloudflared`
 
 ```bash
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
@@ -196,18 +388,20 @@ apt install cloudflared
 cloudflared tunnel login
 ```
 
-#### 🛠️ Criar o tunnel
+#### 🛠️ Criar o túnel
 
 ```bash
 cloudflared tunnel delete homelab
-cloudflared tunnel create homelab #ID_DO_TUNNEL
+cloudflared tunnel create homelab  # ID será gerado automaticamente
 ```
 
-#### 📁 Criar o arquivo de configuração:
+#### 📁 Criar o arquivo de configuração
 
 ```bash
 nano /root/.cloudflared/config.yml
 ```
+
+##### Exemplo de `config.yml`
 
 ```yaml
 tunnel: homelab
@@ -219,148 +413,19 @@ ingress:
   - service: http_status:404
 ```
 
-#### 🚀 Rodar o tunnel (dash.cloudflare.com CNAME @ INSERIR_ID_DO_TUNNEL.cfargotunnel.com)
+#### 🚀 Rodar o túnel manualmente
 
 ```bash
 cloudflared tunnel run homelab
 ```
 
-#### 💡 Instalar como serviço systemd
+📌 **Importante:** Configure o DNS no painel da Cloudflare com um CNAME apontando `azzor1337x.shop` para `INSERIR_ID_DO_TUNNEL.cfargotunnel.com`.
+
+#### 🧩 Instalar como serviço (systemd)
 
 ```bash
 cloudflared service install
 ```
 
 ---
-
-# 5. Adicionar Pi-hole + Unbound (Docker)
-
-## Objetivo
-Instalar Pi-hole (bloqueador de anúncios e rastreadores) com Unbound (resolvedor DNS recursivo) em containers Docker separados, de forma que o Pi-hole use o Unbound como DNS interno e faça consultas diretamente à raiz da internet (sem depender de Google, Cloudflare, etc.).
-
-## Estrutura de Pastas
-```bash
-# Criar estrutura de diretórios personalizada para o serviço DNS no homelab
-sudo mkdir -p /homelab/dns/unbound
-sudo mkdir -p /homelab/dns/etc-pihole
-sudo mkdir -p /homelab/dns/etc-dnsmasq.d
-```
-
-## Configuração do Unbound
-Crie o arquivo de configuração principal do Unbound:
-```bash
-sudo nano /homelab/dns/unbound/unbound.conf
-```
-
-Conteúdo do `unbound.conf`:
-```conf
-server:
-  verbosity: 0
-  interface: 0.0.0.0
-  port: 5335
-  do-ip4: yes
-  do-udp: yes
-  do-tcp: yes
-  root-hints: "/etc/unbound/root.hints"
-  harden-glue: yes
-  harden-dnssec-stripped: yes
-  use-caps-for-id: no
-  edns-buffer-size: 1232
-  cache-min-ttl: 3600
-  cache-max-ttl: 86400
-  prefetch: yes
-  qname-minimisation: yes
-  hide-identity: yes
-  hide-version: yes
-  do-not-query-localhost: no
-
-forward-zone:
-  name: "."
-  # Consulta direta à raiz DNS usando root.hints
-  forward-addr: 198.41.0.4       # a.root-servers.net
-  forward-addr: 199.9.14.201     # b.root-servers.net
-  forward-addr: 192.33.4.12      # c.root-servers.net
-  forward-addr: 199.7.91.13      # d.root-servers.net
-```
-
-> 💡 Dica: mantenha seu arquivo `root.hints` atualizado:
-```bash
-wget -O /homelab/dns/unbound/root.hints https://www.internic.net/domain/named.root
-```
-
-## docker-compose.yml
-Crie o `docker-compose.yml`:
-```bash
-sudo nano /homelab/dns/docker-compose.yml
-```
-
-Conteúdo:
-```yaml
-version: "3"
-
-services:
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    hostname: pihole
-    ports:
-      - "80:80"       # Web Admin
-      - "53:53/tcp"   # DNS TCP
-      - "53:53/udp"   # DNS UDP
-    environment:
-      TZ: "America/Sao_Paulo"
-      WEBPASSWORD: "sua_senha_aqui"
-      DNS1: 127.0.0.1#5335
-      DNS2: 127.0.0.1#5335
-    volumes:
-      - /homelab/dns/etc-pihole/:/etc/pihole/
-      - /homelab/dns/etc-dnsmasq.d/:/etc/dnsmasq.d/
-    restart: unless-stopped
-    depends_on:
-      - unbound
-
-  unbound:
-    container_name: unbound
-    image: mvance/unbound:latest
-    ports:
-      - "5335:5335/udp"
-      - "5335:5335/tcp"
-    volumes:
-      - /homelab/dns/unbound:/opt/unbound/etc/unbound
-    restart: unless-stopped
-```
-
-## Redes e Portas
-- **Pi-hole**:
-  - Porta 80 → Interface web
-  - Porta 53 (TCP/UDP) → DNS
-- **Unbound**:
-  - Porta 5335 (TCP/UDP) → DNS recursivo local
-
-As portas foram definidas dessa forma para evitar conflitos com o blog que agora roda na porta `8888`, liberando a **porta 80** para o Pi-hole.
-
-A rede padrão usada é `bridge`, o que permite comunicação entre os containers e com o host. Não usamos `host` para manter o isolamento e controle fino de portas.
-
-## Inicializar o serviço
-```bash
-cd /homelab/dns
-sudo docker compose up -d
-```
-
-Acesse a interface do Pi-hole:
-```
-http://localhost
-```
-
-## Testar resolução DNS com Unbound
-```bash
-dig google.com @127.0.0.1 -p 5335
-```
-
-## Resumo
-✅ Pi-hole roda na porta 80 (livre após mudança do blog para 8888)  
-✅ Unbound consulta diretamente os root servers via `root.hints`  
-✅ Estrutura organizada em `/homelab/dns`  
-✅ Containers separados, usando rede bridge  
-✅ DNS 100% independente de serviços como Google ou Cloudflare
 
