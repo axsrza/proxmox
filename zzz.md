@@ -46,7 +46,7 @@ services:
     restart: unless-stopped
     networks:
       pihole_net:
-        ipv4_address: 10.2.0.2 # IP fixo dentro da rede interna do Docker para garantir comunicação confiável com o Pi-hole
+        ipv4_address: 10.2.0.2
 
   pihole:
     image: pihole/pihole:latest
@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: "America/Sao_Paulo"
-      WEBPASSWORD: "" # Senha em branco — será definida depois via comando docker exec
+      WEBPASSWORD: ""
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
       - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
@@ -85,16 +85,5 @@ docker compose up -d
 ```
 
 ```bash
-# Definir a senha de acesso do painel do Pi-hole:
 docker exec -it pihole pihole setpassword
-```
-
-```bash
-# Acesse o Pi-hole no navegador:
-# http://IP_DO_HOMELAB/admin
-# Use a senha definida no comando acima
-```
-
-```bash
-# Após testar o funcionamento do Pi-hole como DHCP, desative o DHCP no seu modem/roteador.
 ```
