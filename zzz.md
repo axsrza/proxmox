@@ -1,11 +1,6 @@
 # Homelab
 
-## Descrição
-Este tutorial configura um homelab utilizando um notebook antigo com o processador AMD C-60 APU, 8 GB de RAM e um SSD de 120 GB. O sistema operacional utilizado é o Debian 12 minimal. 
-
-## Passos de Configuração
-
-### 1. Preparação do Sistema
+### 1. Preparacão do Sistema
 Logue como root e configure o sistema:
 
 ```bash
@@ -123,7 +118,7 @@ Execute o comando abaixo para configurar a senha de administração do Pi-hole:
 docker exec -it pihole pihole setpassword
 ```
 
-### 6. Verificar o Status dos Containers
+### 6. Testes
 
 Use os seguintes comandos para verificar o status dos containers, redes, volumes e imagens:
 
@@ -131,27 +126,15 @@ Use os seguintes comandos para verificar o status dos containers, redes, volumes
 docker ps -a
 docker images
 docker network ls
-docker network inspect pihole-unbound_pihole_net
 docker volume ls
 docker compose ls
+docker network inspect pihole-unbound_pihole_net
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
-```
-
-### 7. Testar a Resolução DNS
-
-Para testar a resolução DNS:
-
-```bash
+dig @10.2.0.3 google.com
+dig @10.2.0.2 google.com
+dig +dnssec +multi dnssec-failed.org @10.2.0.2
 dig +trace google.com
 dig +dnssec +multi dnssec-failed.org @10.2.0.2
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
-
-### 8. Verificar o Status com Formato de Tabela
-
-Para verificar o status dos containers de forma mais legível:
-
-```bash
-docker ps --format "table {{.Names}}	{{.Status}}	{{.Ports}}"
-```
-
