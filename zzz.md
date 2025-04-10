@@ -278,15 +278,14 @@ DNS=192.168.1.1
 
 ```bash
 systemctl enable --now systemd-networkd
-systemctl enable --now systemd-resolved
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+nano /etc/resolv.conf
+nameserver 192.168.1.1
 ```
 
 4. **Testar a conectividade:**
 
 ```bash
 systemctl restart systemd-networkd
-systemctl restart systemd-resolved
 ```
 
 5. **Reconectar via PuTTY no mesmo IP (agora fixo)**
