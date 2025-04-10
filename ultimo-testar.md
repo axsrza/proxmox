@@ -303,6 +303,11 @@ sudo systemctl disable \
   fstrim.service bluetooth.service networking.service \
   anacron.service e2scrub_all.service e2scrub_reap.service
 sudo apt remove --purge anacron bluetooth ifupdown -y
+sudo apt purge \
+  avahi-autoipd discover discover-data \
+  inetutils-telnet emacsen-common \
+  iamerican ibritish ienglish-common ispell dictionaries-common \
+  debian-faq doc-debian installation-report iw -y
 sudo apt autoremove --purge -y
 sudo systemctl reset-failed
 sudo find /etc/systemd/system /lib/systemd/system \
@@ -320,26 +325,13 @@ sudo systemctl mask \
 sudo systemctl mask e2scrub_all.service e2scrub_reap.service
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
-sudo reboot
-```
-
----
-
-### 🧹 LIMPEZA DE LOGS DO JOURNAL
-
-```bash
-# Reseta falhas, gira e limpa os logs do journal
-sudo systemctl reset-failed
 sudo journalctl --rotate
 sudo journalctl --vacuum-time=1s
 sudo reboot
 ```
-
----
 
 #### 🚀 att tudo
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt autoclean
 ```
-
