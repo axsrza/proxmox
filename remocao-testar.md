@@ -24,7 +24,7 @@ sudo systemctl disable \
 
 #### 2.1 Comando:
 ```bash
-sudo apt remove --purge anacron bluetooth ifupdown -y
+sudo apt remove --purge anacron bluetooth ifupdown iptables -y
 ```
 
 - **anacron**: Ver item anterior.
