@@ -57,7 +57,7 @@ nano docker-compose.yml
 Adicione o conteúdo abaixo no arquivo `docker-compose.yml`:
 
 ```yaml
-vversion: "3"
+version: "3"
 
 services:
   unbound:
@@ -263,6 +263,7 @@ Name=enx00e04c680094
 Address=192.168.1.99/24
 Gateway=192.168.1.1
 DNS=192.168.1.1 #127.0.0.1
+#DNS=127.0.0.1
 ```
 
 3. **Ativar os novos serviços de rede, mantendo o atual por enquanto:**
@@ -271,6 +272,7 @@ DNS=192.168.1.1 #127.0.0.1
 nano /etc/resolv.conf
 
 nameserver 192.168.1.1 #127.0.0.1
+#nameserver 127.0.0.1
 
 systemctl enable --now systemd-networkd
 systemctl restart systemd-networkd
@@ -283,6 +285,7 @@ sudo reboot
 nano /etc/resolv.conf
 
 nameserver 192.168.1.1 #127.0.0.1
+#nameserver 127.0.0.1
 
 systemctl restart systemd-networkd
 systemctl disable --now networking
