@@ -276,22 +276,19 @@ DNS=192.168.1.1
 3. **Ativar os novos serviços de rede, mantendo o atual por enquanto:**
 
 ```bash
-systemctl enable --now systemd-networkd
 nano /etc/resolv.conf
 nameserver 192.168.1.1
-```
-
-4. **Testar a conectividade:**
-
-```bash
+systemctl enable --now systemd-networkd
 systemctl restart systemd-networkd
+sudo reboot
 ```
-
-5. **Reconectar via PuTTY no mesmo IP (agora fixo)**
 
 6. **Desabilitar o serviço de rede antigo com segurança:**
 
 ```bash
+nano /etc/resolv.conf
+nameserver 192.168.1.1
+systemctl restart systemd-networkd
 systemctl disable --now networking
 ```
 
@@ -300,18 +297,13 @@ systemctl disable --now networking
 ### 🔧 LIMPEZA DE SERVIÇOS E PACOTES DESNECESSÁRIOS
 
 ```bash
-# Desativa serviços automáticos e desnecessários
 sudo systemctl disable \
   apt-daily.service apt-daily-upgrade.service \
   logrotate.service man-db.service dpkg-db-backup.service \
   fstrim.service bluetooth.service networking.service \
   anacron.service e2scrub_all.service e2scrub_reap.service
-
-# Remove pacotes desnecessários
 sudo apt remove --purge anacron bluetooth ifupdown -y
 sudo apt autoremove --purge -y
-
-# Limpa rastros de serviços removidos
 sudo systemctl reset-failed
 sudo find /etc/systemd/system /lib/systemd/system \
   -name '*auditd*' -o -name '*connman*' -o -name '*console-screen*' \
@@ -319,20 +311,13 @@ sudo find /etc/systemd/system /lib/systemd/system \
   -o -name '*NetworkManager*' -o -name '*plymouth*' \
   -o -name '*syslog*' -o -name '*hwdb*' -o -name '*oomd*' \
   -o -name '*update-done*' -o -name '*vconsole*' -delete
-
-# Desativa e mascara serviços de Wi-Fi (não utilizados)
 sudo systemctl disable \
   wpa_supplicant.service wpa_supplicant@.service \
   wpa_supplicant-nl80211@.service wpa_supplicant-wired@.service
-
 sudo systemctl mask \
   wpa_supplicant.service wpa_supplicant@.service \
   wpa_supplicant-nl80211@.service wpa_supplicant-wired@.service
-
-# Mascara serviços de verificação de sistema de arquivos se não usados
 sudo systemctl mask e2scrub_all.service e2scrub_reap.service
-
-# Aplica as mudanças no systemd
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
 sudo reboot
