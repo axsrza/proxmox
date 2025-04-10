@@ -34,15 +34,12 @@ sudo apt remove --purge anacron bluetooth ifupdown -y
 #### 2.2 Comando:
 ```bash
 sudo apt purge \
-  avahi-autoipd discover discover-data \
   inetutils-telnet emacsen-common \
   iamerican ibritish ienglish-common ispell dictionaries-common \
   debian-faq doc-debian installation-report iw -y
 ```
 
 **Função de cada pacote:**
-- **avahi-autoipd**: Atribui IP automático (zeroconf). Pode interferir com IPs estáticos.
-- **discover / discover-data**: Detecta hardware automaticamente no boot. Redundante para servidores fixos.
 - **inetutils-telnet**: Cliente telnet, protocolo obsoleto e inseguro.
 - **emacsen-common**: Dependência de instalação de editores Emacs. Supérfluo.
 - **iamerican / ibritish / ienglish-common / ispell / dictionaries-common**: Dicionários e corretores ortográficos.
@@ -74,17 +71,13 @@ sudo find /etc/systemd/system /lib/systemd/system \
   -name '*auditd*' -o -name '*connman*' -o -name '*console-screen*' \
   -o -name '*display-manager*' -o -name '*firewalld*' \
   -o -name '*NetworkManager*' -o -name '*plymouth*' \
-  -o -name '*syslog*' -o -name '*hwdb*' -o -name '*oomd*' \
-  -o -name '*update-done*' -o -name '*vconsole*' -delete
-```
+ ```
 
 **Funções comuns dos arquivos removidos:**
 - **auditd**: Demonstração de auditoria do sistema.
 - **connman**: Gerenciador de conexão (Wi-Fi/Ethernet).
 - **console-screen / display-manager / plymouth**: Interfaces gráficas e bootsplash.
 - **firewalld / NetworkManager**: Sistemas mais pesados para rede e firewall, trocados por ferramentas mais leves.
-- **syslog**: Logs do sistema, substituídos pelo `journald`.
-- **hwdb / oomd / update-done / vconsole**: Configurações de hardware, memória, teclado e status do update.
 
 ---
 
@@ -99,12 +92,10 @@ sudo systemctl mask \
   wpa_supplicant.service wpa_supplicant@.service \
   wpa_supplicant-nl80211@.service wpa_supplicant-wired@.service
 
-sudo systemctl mask e2scrub_all.service e2scrub_reap.service
 ```
 
 **Explicação:**
 - **wpa_supplicant**: Responsável por conexões Wi-Fi. Mascarado para impedir sua ativação.
-- **e2scrub**: Verificação de integridade de sistemas de arquivos ext4. Pode ser desnecessário se já houver backups e manutenção preventiva.
 
 ---
 
@@ -117,10 +108,6 @@ sudo journalctl --rotate
 sudo journalctl --vacuum-time=1s
 ```
 
-**Função:**
-- **daemon-reexec / reload**: Atualiza o `systemd` após modificações.
-- **journalctl rotate/vacuum**: Força a rotação e limpeza de logs antigos.
-
 ---
 
 ### 6. Reiniciar o sistema
@@ -129,4 +116,3 @@ sudo journalctl --vacuum-time=1s
 sudo reboot
 ```
 
-Aplica as mudanças feitas no sistema de forma limpa e segura.
