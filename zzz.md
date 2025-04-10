@@ -314,3 +314,67 @@ sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo ap
 ```
 
 
+
+
+
+
+
+
+## 🛜 Configurar IP fixo com `systemd-networkd` de forma segura
+
+1. **Identificar a interface atual:**
+
+```bash
+ip -c a
+```
+
+2. **Criar o arquivo de configuração com o mesmo IP da rede atual:**
+
+```bash
+nano /etc/systemd/network/10-wired.network
+```
+
+Exemplo:
+
+```ini
+[Match]
+Name=enx00e04c680094
+
+[Network]
+Address=192.168.1.99/24
+Gateway=192.168.1.1
+DNS=192.168.1.1
+```
+
+3. **Ativar os novos serviços de rede, mantendo o atual por enquanto:**
+
+```bash
+systemctl enable --now systemd-networkd
+systemctl enable --now systemd-resolved
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+```
+
+4. **Testar a conectividade:**
+
+```bash
+systemctl restart systemd-networkd
+systemctl restart systemd-resolved
+```
+
+5. **Reconectar via PuTTY no mesmo IP (agora fixo)**
+
+6. **Desabilitar o serviço de rede antigo com segurança:**
+
+```bash
+systemctl disable --now networking
+```
+
+---
+
+
+#### 🚀 att tudo
+
+```bash
+sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt autoclean
+```
+
