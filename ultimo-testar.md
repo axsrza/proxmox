@@ -115,15 +115,16 @@ docker exec -it pihole pihole setpassword
 Use os seguintes comandos para verificar o status dos containers, redes, volumes e imagens:
 
 ```bash
+ip -c a
 docker ps -a
 docker images
 docker network ls
 docker volume ls
 docker compose ls
 docker network inspect pihole-unbound_pihole_net
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pihole
+hostname -I  # Mostra IP do host (útil pro Pi-hole)
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound
-dig @10.2.0.3 google.com
+dig @192.168.1.99 google.com
 dig @10.2.0.2 google.com
 dig +dnssec +multi dnssec-failed.org @10.2.0.2
 dig +trace google.com
