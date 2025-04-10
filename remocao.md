@@ -8,22 +8,15 @@ Este guia detalha a função de cada serviço ou pacote desabilitado/remoção n
 
 ```bash
 sudo systemctl disable \
-  apt-daily.service apt-daily-upgrade.service \
-  logrotate.service man-db.service dpkg-db-backup.service \
-  fstrim.service bluetooth.service networking.service \
-  anacron.service e2scrub_all.service e2scrub_reap.service
+  bluetooth.service \
+  networking.service \
+  anacron.service \
 ```
 
 **Funções detalhadas:**
-- **apt-daily.service / apt-daily-upgrade.service**: Agendam atualizações automáticas de pacotes pelo APT. Em homelabs, onde o controle manual é preferível, isso é desnecessário.
-- **logrotate.service**: Roda o `logrotate`, que gerencia rotação e compressão de logs. Pode ser substituído por scripts personalizados se necessário.
-- **man-db.service**: Atualização das páginas de manual. Pode ser desabilitado se não forem utilizadas man pages localmente.
-- **dpkg-db-backup.service**: Backup automático da base de dados de pacotes dpkg. Em ambientes controlados, isso pode ser omitido.
-- **fstrim.service**: Envia comandos TRIM para SSDs, liberando blocos inativos. Pode ser feito manualmente quando necessário.
 - **bluetooth.service**: Gerencia conexões Bluetooth. Desnecessário em servidores sem interface sem fio.
 - **networking.service**: Sistema tradicional de gerenciamento de redes (usado com ifupdown). Substituído por `systemd-networkd` ou `netplan`.
 - **anacron.service**: Executa tarefas perdidas do `cron` se o sistema estiver desligado. Desnecessário em servidores que ficam ligados.
-- **e2scrub_all / e2scrub_reap**: Verifica e "resgata" sistemas de arquivos ext4 em background. Redundante em ambientes bem monitorados.
 
 ---
 
