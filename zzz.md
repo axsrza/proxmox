@@ -311,17 +311,14 @@ sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo ap
 #### LIMPEZA
 
 ```bash
-
-sudo systemctl disable anacron.service e2scrub_all.service e2scrub_reap.service
-sudo systemctl disable anacron.service
-sudo systemctl disable networking.service
-sudo systemctl disable bluetooth.service
+sudo systemctl disable apt-daily.service apt-daily-upgrade.service logrotate.service man-db.service dpkg-db-backup.service fstrim.service bluetooth.service networking.service anacron.service e2scrub_all.service e2scrub_reap.service
 sudo apt remove --purge anacron bluetooth ifupdown -y
 sudo apt autoremove --purge -y
-sudo reboot
 sudo systemctl reset-failed
 sudo find /etc/systemd/system /lib/systemd/system -name '*auditd*' -o -name '*connman*' -o -name '*console-screen*' -o -name '*display-manager*' -o -name '*firewalld*' -o -name '*NetworkManager*' -o -name '*plymouth*' -o -name '*syslog*' -o -name '*hwdb*' -o -name '*oomd*' -o -name '*update-done*' -o -name '*vconsole*' -delete
-
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo reboot
 ```
 
 
