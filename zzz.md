@@ -248,6 +248,64 @@ cloudflared tunnel run blog
 cloudflared service install
 ```
 
+1. **Identificar a interface:**
+```bash
+ip -c a
+```
+
+2. **Criar arquivo de configuração de rede:**
+```bash
+nano /etc/systemd/network/10-wired.network
+```
+
+Exemplo:
+```ini
+[Match]
+Name=enx00e04c680094
+
+[Network]
+Address=192.168.1.99/24
+Gateway=192.168.1.1
+DNS=192.168.1.1
+```
+
+3. **Habilitar serviços:**
+```bash
+systemctl disable --now networking
+systemctl enable --now systemd-networkd
+systemctl enable --now systemd-resolved
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+```
+
+4. **Reiniciar rede ou o sistema:**
+```bash
+reboot
+# ou
+systemctl restart systemd-networkd
+```
+
+5. **Reconectar no novo IP via PuTTY**
+
+---
+
+## ✅ Dica de Segurança
+
+Antes de desabilitar o `networking.service`, valide a configuração com:
+```bash
+systemctl start systemd-networkd
+networkctl status
+```
+Se tudo certo:
+```bash
+systemctl disable --now networking
+```
+
+---
+
+## 🧠 Referências Rápidas
+- Arquivo de rede: `/etc/systemd/network/*.network`
+- Logs: `journalctl -u systemd-networkd`
+- Status da rede: `networkctl`
 
 #### 🚀 att tudo
 
