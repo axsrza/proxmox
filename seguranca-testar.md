@@ -1,14 +1,13 @@
-# 🛡️ Configuração de Firewall - nftables
 
 ```bash
 sudo apt install nftables -y
 sudo systemctl enable nftables
 sudo systemctl start nftables
+sudo rm /etc/nftables.conf
+sudo nano /etc/nftables.conf
 ```
 
-### 📜 Regras no `/etc/nftables.conf`
-
-```nftables
+```bash
 table inet filter {
     chain input {
         type filter hook input priority filter; policy drop;
@@ -53,9 +52,6 @@ table inet filter {
 }
 ```
 
-### 💾 Salvar regras atuais para o boot:
-
 ```bash
 sudo nft list ruleset > /etc/nftables.conf
 ```
-
