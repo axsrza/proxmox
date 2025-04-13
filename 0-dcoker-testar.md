@@ -1,3 +1,10 @@
+
+## Estrutura de pastas sugerida
+
+```bash
+mkdir -p ~/homelab/media/music
+mkdir -p ~/homelab/media/video
+```
 ## yt-dlp-web-ui
 
 ```bash
@@ -22,8 +29,6 @@ services:
 cd ~/homelab/yt-dlp
 sudo docker-compose up -d
 ```
-
----
 
 ## Jellyfin
 
@@ -50,13 +55,3 @@ services:
 cd ~/homelab/jellyfin
 sudo docker-compose up -d
 ```
-
----
-
-## Estrutura de pastas sugerida
-
-```bash
-mkdir -p ~/homelab/media/music
-mkdir -p ~/homelab/media/video
-```
-
