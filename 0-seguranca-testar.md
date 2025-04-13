@@ -7,7 +7,7 @@ sudo rm /etc/nftables.conf
 sudo nano /etc/nftables.conf
 ```
 
-```bash
+```nftables
 table inet filter {
     chain input {
         type filter hook input priority filter; policy drop;
