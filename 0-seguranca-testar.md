@@ -1,57 +1,52 @@
 
 ```bash
-sudo apt install nftables -y
-sudo systemctl enable nftables
-sudo systemctl start nftables
-sudo rm /etc/nftables.conf
-sudo nano /etc/nftables.conf
-```
 
-```nftables
-table inet filter {
-    chain input {
-        type filter hook input priority filter; policy drop;
+# Limpar regras existentes
+iptables -F
+iptables -X
+iptables -t nat -F
+iptables -t nat -X
 
-        # Permitir loopback
-        iif "lo" accept
+# Política padrão: bloquear tudo
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
 
-        # Permitir conexões estabelecidas
-        ct state established,related accept
+# Permitir conexões locais (loopback)
+iptables -A INPUT -i lo -j ACCEPT
 
-        # SSH
-        tcp dport 22 ct state new accept
+# Permitir conexões já estabelecidas e relacionadas
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-        # DNS (UDP e TCP)
-        udp dport 53 accept
-        tcp dport 53 ct state new accept
+# Permitir SSH (caso use)
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
 
-        # NGINX no blog (porta 8888)
-        tcp dport 8888 ct state new accept
+# Permitir acesso HTTP do blog (porta 8888)
+iptables -A INPUT -p tcp --dport 8888 -j ACCEPT
 
-        # Pi-hole Admin e serviços web
-        tcp dport 80 ct state new accept
-        tcp dport 443 ct state new accept
+# Permitir acesso ao Portainer (porta 9000)
+iptables -A INPUT -p tcp --dport 9000 -j ACCEPT
 
-        # NTP (Network Time Protocol)
-        udp dport 123 accept
+# Permitir DNS local (Pi-hole)
+iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
 
-        # DHCP (caso esteja usando o Pi-hole como DHCP Server)
-        udp dport 67 accept
+# Permitir acesso ao Unbound (DNS recursivo na 127.0.0.1:5335, só local)
+iptables -A INPUT -i lo -p tcp --dport 5335 -j ACCEPT
+iptables -A INPUT -i lo -p udp --dport 5335 -j ACCEPT
 
-        # Logar e contabilizar o que for bloqueado
-        log prefix "[FIREWALL DROP] " flags all counter
-    }
+# Permitir tráfego Docker bridge (se necessário)
+iptables -A INPUT -i br-124625da573a -j ACCEPT
+iptables -A INPUT -i br-971eb000a6b2 -j ACCEPT
+iptables -A FORWARD -i br-124625da573a -j ACCEPT
+iptables -A FORWARD -i br-971eb000a6b2 -j ACCEPT
 
-    chain forward {
-        type filter hook forward priority filter; policy drop;
-    }
+# Ping (opcional)
+iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
-    chain output {
-        type filter hook output priority filter; policy accept;
-    }
-}
-```
+# Log (opcional)
+# iptables -A INPUT -j LOG --log-prefix "iptables input drop: "
 
-```bash
-sudo nft list ruleset > /etc/nftables.conf
+# Salvar regras
+iptables-save > /etc/iptables/rules.v4
 ```
