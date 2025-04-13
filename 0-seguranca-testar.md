@@ -7,46 +7,50 @@ iptables -X
 iptables -t nat -F
 iptables -t nat -X
 
-# Política padrão: bloquear tudo
+# Política padrão: segurança máxima
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
 
-# Permitir conexões locais (loopback)
+# Loopback (localhost)
 iptables -A INPUT -i lo -j ACCEPT
 
-# Permitir conexões já estabelecidas e relacionadas
+# Conexões estabelecidas e relacionadas
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-# Permitir SSH (caso use)
+# SSH (ajuste o IP permitido se quiser mais segurança)
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+# iptables -A INPUT -p tcp -s 192.168.1.0/24 --dport 22 -j ACCEPT
 
-# Permitir acesso HTTP do blog (porta 8888)
-iptables -A INPUT -p tcp --dport 8888 -j ACCEPT
-
-# Permitir acesso ao Portainer (porta 9000)
+# Portainer (painel web na porta 9000)
 iptables -A INPUT -p tcp --dport 9000 -j ACCEPT
 
-# Permitir DNS local (Pi-hole)
+# Blog (NGINX na porta 8888)
+iptables -A INPUT -p tcp --dport 8888 -j ACCEPT
+
+# DNS (Pi-hole, público na LAN)
 iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
 
-# Permitir acesso ao Unbound (DNS recursivo na 127.0.0.1:5335, só local)
+# Unbound (DNS recursivo local, apenas localhost)
 iptables -A INPUT -i lo -p tcp --dport 5335 -j ACCEPT
 iptables -A INPUT -i lo -p udp --dport 5335 -j ACCEPT
 
-# Permitir tráfego Docker bridge (se necessário)
-iptables -A INPUT -i br-124625da573a -j ACCEPT
-iptables -A INPUT -i br-971eb000a6b2 -j ACCEPT
-iptables -A FORWARD -i br-124625da573a -j ACCEPT
-iptables -A FORWARD -i br-971eb000a6b2 -j ACCEPT
+# Docker: liberar bridge principal (docker0)
+iptables -A INPUT -i docker0 -j ACCEPT
+iptables -A FORWARD -i docker0 -j ACCEPT
 
-# Ping (opcional)
+# Ping (ICMP)
 iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
-# Log (opcional)
-# iptables -A INPUT -j LOG --log-prefix "iptables input drop: "
+# Log de pacotes bloqueados (opcional e limitado)
+iptables -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables dropped: " --log-level 4
 
-# Salvar regras
+# Salvar regras para persistência
 iptables-save > /etc/iptables/rules.v4
+
+# (Opcional) garantir persistência no boot
+sudo apt install iptables-persistent -y
+sudo netfilter-persistent save
+
 ```
