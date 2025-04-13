@@ -12,7 +12,7 @@ sudo mkdir -p ~/homelab/yt-dlp
 sudo nano ~/homelab/yt-dlp/docker-compose.yml
 ```
 
-```yaml
+```bash
 services:
   yt-dlp:
     container_name: yt-dlp
@@ -37,7 +37,7 @@ sudo mkdir -p ~/homelab/jellyfin
 sudo nano ~/homelab/jellyfin/docker-compose.yml
 ```
 
-```yaml
+```bash
 services:
   jellyfin:
     container_name: jellyfin
@@ -53,5 +53,34 @@ services:
 
 ```bash
 cd ~/homelab/jellyfin
+sudo docker-compose up -d
+```
+
+## Heimdall Dashboard
+
+```bash
+sudo mkdir -p ~/homelab/heimdall
+sudo nano ~/homelab/heimdall/docker-compose.yml
+```
+
+```bash
+services:
+  heimdall:
+    container_name: heimdall
+    image: lscr.io/linuxserver/heimdall:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./config:/config
+    ports:
+      - "81:80"
+      - "444:443"
+```
+
+```bash
+cd ~/homelab/heimdall
 sudo docker-compose up -d
 ```
