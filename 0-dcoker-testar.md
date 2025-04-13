@@ -18,11 +18,26 @@ services:
     container_name: yt-dlp
     image: ghcr.io/marcopiovanello/yt-dlp-web-ui:latest
     ports:
-      - "8080:8080"
+      - "3033:3033"
     volumes:
       - ./config:/app/config
-      - ../media:/downloads
+      - ~/homelab/media:/downloads
     restart: unless-stopped
+```
+
+```bash
+sudo nano ~/homelab/yt-dlp/config/config.yml
+```
+
+```bash
+port: 3033
+downloadPath: /downloads  # Corrigido aqui
+require_auth: false
+queue_size: 4
+downloaderPath: /usr/local/bin/yt-dlp
+enable_file_logging: false
+log_path: /logs/yt-dlp-webui.log
+local_database_path: /app/local.db
 ```
 
 ```bash
@@ -46,8 +61,8 @@ services:
       - "8096:8096"
     volumes:
       - ./config:/config
-      - ../media/music:/media/music:ro
-      - ../media/video:/media/video:ro
+      - ~/homelab/media/music:/media/music:ro
+      - ~/homelab/media/video:/media/video:ro
     restart: unless-stopped
 ```
 
