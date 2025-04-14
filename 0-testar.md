@@ -1,3 +1,4 @@
+
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
 
 ## 📦 Pré-Instalação: Limpando o Disco
@@ -71,8 +72,14 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
 
 ```bash
 ip -c a
+```
+
+```bash
 sudo passwd root
 su
+```
+
+```bash
 sudo timedatectl set-timezone America/Sao_Paulo
 ```
 
@@ -87,6 +94,7 @@ SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:e0:4c:68:00:94", NAME="eth0"
 ```
 
 ### systemd-networkd: IP fixo
+
 ```bash
 sudo nano /etc/systemd/network/10-wired.network
 ```
