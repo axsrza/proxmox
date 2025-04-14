@@ -4,16 +4,20 @@
 
 Antes de iniciar a instalação do Debian 12, é recomendado limpar completamente o disco para evitar partições antigas ou problemas na criação da tabela de partição.
 
-1. Quando estiver no instalador do Debian, pressione `Ctrl + Alt + F2` para abrir um terminal.
-2. Execute o comando abaixo para apagar a tabela de partição do disco:
+✅ **Alternativa 1: Usar `dd` no terminal do instalador**
+
+Se `wipefs` não estiver disponível, use o comando `dd` para apagar os primeiros setores do disco:
+
+1. Pressione `Ctrl + Alt + F2` para abrir um terminal no instalador.
+2. Execute o comando abaixo:
 
 ```bash
-wipefs -a /dev/sda
+dd if=/dev/zero of=/dev/sda bs=1M count=10
 ```
 
 > ⚠️ Isso irá remover todas as partições e dados do disco `/dev/sda`. Use com cuidado.
 
-3. Verifique se o disco está limpo com:
+3. Verifique com:
 
 ```bash
 lsblk
@@ -30,13 +34,13 @@ lsblk
    ```
    deve estar disponível.
 
----
+# Homelab Setup - Debian 12 Minimal com LVM e Snapshots
 
-## 🛠️ Instalação do Debian com LVM e Snapshots
+## Instalação do Sistema com LVM
 
 ### Etapa: Instalador do Debian — Particionamento Manual com LVM
 
-Quando chegar na etapa **"Partition disks"**:
+Quando chegar em "Partition disks":
 
 ### 1. Selecione:
 ```
@@ -53,18 +57,18 @@ Manual
 Yes – Create a new empty partition table on this device
 ```
 
-### 4. Criar partição física para o LVM:
+### 4. Crie a partição para o LVM:
 ```
 > FREE SPACE (120.0 GB)
   > Create a new partition
 ```
-- **Size**: `119 GB`
-- **Type**: `Primary`
-- **Location**: `Beginning`
-- **Use as**: `physical volume for LVM`
+- Size: `119 GB`
+- Type: `Primary`
+- Location: `Beginning`
+- Use as: `physical volume for LVM`
 - Selecione: `Done setting up the partition`
 
-### 5. Configurar o LVM:
+### 5. Configure o LVM:
 Na tela principal de particionamento, selecione:
 ```
 Configure the Logical Volume Manager
@@ -107,17 +111,9 @@ Create logical volume
 → Size: 20 GB
 ```
 
-#### LV: swap (opcional)
-```
-Create logical volume
-→ Volume group: homelab-vg
-→ Name: swap
-→ Size: 1 GB
-```
+> Deixe ~20 GB livres no VG para snapshots futuros.
 
-> 💡 Deixe cerca de **20 GB livres no VG** para snapshots futuros.
-
-### 9. Definir sistemas de arquivos:
+### 9. Defina sistemas de arquivos:
 
 #### root
 ```
@@ -133,21 +129,15 @@ Create logical volume
 → Mount point: /home
 ```
 
-#### var (opcional)
+#### var
 ```
 → /dev/mapper/homelab--vg-var
 → Use as: ext4
 → Mount point: /var
 ```
 
-#### swap (opcional)
-```
-→ /dev/mapper/homelab--vg-swap
-→ Use as: swap area
-```
-
-### 10. Finalizar particionamento:
-- Se sobrou espaço fora do LVM (~1 GB), crie uma partição swap física.
+### 10. Finalize particionamento:
+- Se sobrou espaço fora do LVM (~1 GB), crie uma partição swap.
 - Caso contrário, pode ignorar.
 
 Selecione:
