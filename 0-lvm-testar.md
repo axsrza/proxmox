@@ -184,12 +184,4 @@ No final, seu particionamento pode parecer algo assim:
 
 ### ✅ Finalize particionamento
 
-- Se sobrou espaço fora do LVM (~1 GB), crie uma partição swap.
-- Caso contrário, pode ignorar.
-
-Selecione:
-```
-Finish partitioning and write changes to disk
-→ Yes
-```
 
