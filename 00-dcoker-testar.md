@@ -1,4 +1,4 @@
-🎞️ metube
+🎞️ Metube
 
 ```bash
 sudo mkdir -p /srv/metube/downloads
@@ -40,7 +40,6 @@ services:
   navidrome:
     image: deluan/navidrome:latest
     container_name: navidrome
-    user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "4533:4533"
     volumes:
@@ -101,8 +100,6 @@ cd /srv/yt-dlp
 sudo docker-compose up -d
 ```
 
----
-
 ## 📺 Jellyfin
 
 ```bash
@@ -132,8 +129,6 @@ services:
 cd /srv/jellyfin
 sudo docker-compose up -d
 ```
-
----
 
 ## 🧭 Heimdall Dashboard
 
@@ -165,4 +160,10 @@ services:
 ```bash
 cd /srv/heimdall
 sudo docker-compose up -d
+```
+
+## 🧭 root como proprietario
+
+```bash
+sudo chown -R 1000:1000 /srv/metube
 ```
