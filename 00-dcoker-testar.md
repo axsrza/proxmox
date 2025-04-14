@@ -5,6 +5,10 @@ sudo mkdir -p /srv/metube/downloads
 ```
 
 ```bash
+sudo nano /srv/metube/docker-compose.yml
+```
+
+```bash
 services:
   metube:
     image: ghcr.io/alexta69/metube
