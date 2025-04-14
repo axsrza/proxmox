@@ -8,7 +8,7 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
 1. Assim que abrir o instalador, pressione `Ctrl + Alt + F2` para abrir um terminal.
 2. Execute:
    ```bash
-   dd if=/dev/zero of=/dev/sda bs=1M count=10 status=progress
+   dd if=/dev/zero of=/dev/sda bs=1M count=10
    ```
 3. Reinicie com `Ctrl + Alt + Del`.
 
