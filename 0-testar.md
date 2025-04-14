@@ -1,125 +1,82 @@
-# Antes de instalar o Debian 12, é recomendável apagar completamente o disco para evitar conflitos com particoes antigas.
+# 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
+
+## 📦 Pré-Instalação: Limpando o Disco
+
+Antes de instalar o Debian 12, é recomendável apagar completamente o disco para evitar conflitos com partições antigas.
 
 1. Assim que abrir o instalador, pressione `Ctrl + Alt + F2` para abrir um terminal.
 2. Execute:
    ```bash
-   dd if=/dev/zero of=/dev/sda bs=1M count=10
+   dd if=/dev/zero of=/dev/sda bs=1M count=10 status=progress
    ```
-   
-3. Reboot `Ctrl + Alt + Del`.
+3. Reinicie com `Ctrl + Alt + Del`.
 
 ---
 
 ## 📍 Particionamento Manual com LVM
 
-Ao chegar em "Partition disks", siga:
+### Etapas no Instalador
 
-### 1. Selecione:
-```
-Manual
-```
+1. Em "Partition disks":
+   ```
+   Manual
+   ```
+2. Escolha o disco:
+   ```
+   [ ] SCSI1 (0,0,0) (sda) - 120.0 GB ATA SSD
+   ```
+3. Confirme:
+   ```
+   Yes – Create a new empty partition table on this device
+   ```
+4. Crie a partição para LVM:
+   ```
+   > FREE SPACE (120.0 GB)
+     > Create a new partition
+   ```
+   - Tamanho: `119 GB`
+   - Tipo: `Primary`
+   - Localização: `Beginning`
+   - Use as: `physical volume for LVM`
+   - Finalize: `Done setting up the partition`
 
-### 2. Escolha o disco:
-```
-[ ] SCSI1 (0,0,0) (sda) - 120.0 GB ATA SSD
-```
+5. Configure o LVM:
+   ```
+   Configure the Logical Volume Manager
+   ```
+6. Confirme:
+   ```
+   Write the changes to the disk and configure LVM? → Yes
+   ```
+7. Crie o volume group:
+   ```
+   Create volume group → homelab-vg
+   → selecione /dev/sda1
+   ```
+8. Crie os volumes lógicos:
+   - `root` → 10 GB
+   - `var` → 10 GB
+   - `home` → 20 GB
+   - `swap` (opcional) → 1 GB
 
-### 3. Confirme:
-```
-Yes – Create a new empty partition table on this device
-```
-
-### 4. Crie a particao para LVM:
-```
-> FREE SPACE (120.0 GB)
-  > Create a new partition
-```
-- Tamanho: `119 GB`
-- Tipo: `Primary`
-- Localização: `Beginning`
-- Use as: `physical volume for LVM`
-- Finalize: `Done setting up the partition`
-
-### 5. Configure o LVM:
-Na tela principal, selecione:
-```
-Configure the Logical Volume Manager
-```
-
-### 6. Confirme:
-```
-Write the changes to the disk and configure LVM? → Yes
-```
-
-### 7. Crie o volume group (VG):
-```
-Create volume group → homelab-vg
-→ selecione /dev/sda1
-```
-
-### 8. Crie os volumes lógicos (LVs):
-
-#### LV: root
-```
-Name: root
-Size: 20 GB
-```
-
-#### LV: var
-```
-Name: var
-Size: 20 GB
-```
-
-#### LV: home
-```
-Name: home
-Size: 40 GB
-```
-
-#### (Opcional) LV: swap
-```
-Name: swap
-Size: 2 GB
-```
+9. Configure os sistemas de arquivos:
+   - `/` → ext4 → `/dev/mapper/homelab--vg-root`
+   - `/home` → ext4 → `/dev/mapper/homelab--vg-home`
+   - `/var` → ext4 → `/dev/mapper/homelab--vg-var`
+   - `swap` → swap → `/dev/mapper/homelab--vg-swap`
 
 ---
 
-- Selecione `/dev/mapper/homelab--vg-root`
-- Use como: `ext4 journaling file system`
-- Mount point: `/`
-- (Opcional) Mount options: `noatime`
-
-#### ✅ Home:
-- Selecione `/dev/mapper/homelab--vg-home`
-- Use como: `ext4 journaling file system`
-- Mount point: `/home`
-
-#### ✅ Var:
-- Selecione `/dev/mapper/homelab--vg-var`
-- Use como: `ext4 journaling file system`
-- Mount point: `/var`
-
-#### ✅ Swap:
-- Selecione `/dev/mapper/homelab--vg-swap`
-- Use como: `swap area`
-
-## 🚀 Primeiro Boot e Configuração Inicial
+## 🚀 Primeiro Boot e IP Fixo (systemd-networkd)
 
 ```bash
 ip -c a
-```
-
-```bash
 sudo passwd root
 su
-```
-
-```bash
 sudo timedatectl set-timezone America/Sao_Paulo
 ```
 
-### Udev + systemd-networkd (IP fixo)
+### Udev: Nome fixo para interface de rede
 
 ```bash
 sudo nano /etc/udev/rules.d/10-network.rules
@@ -129,6 +86,7 @@ sudo nano /etc/udev/rules.d/10-network.rules
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:e0:4c:68:00:94", NAME="eth0"
 ```
 
+### systemd-networkd: IP fixo
 ```bash
 sudo nano /etc/systemd/network/10-wired.network
 ```
@@ -162,7 +120,7 @@ sudo reboot
 
 ---
 
-## 🐳 Instalar Docker e Compose
+## 🐳 Instalar Docker + Compose
 
 ```bash
 sudo apt install iptables btop -y
@@ -264,7 +222,7 @@ docker-compose up -d
 docker exec -it pihole pihole setpassword
 ```
 
-Ajuste o DNS no Pi-hole via Web UI:
+Ajuste o DNS via Web UI:
 ```
 127.0.0.1#5335
 ```
@@ -287,7 +245,7 @@ sudo reboot
 
 ---
 
-## 📦 Portainer via Docker
+## 🧭 Portainer via Docker
 
 ```bash
 mkdir -p ~/homelab/portainer
