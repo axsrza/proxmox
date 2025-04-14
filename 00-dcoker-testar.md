@@ -25,7 +25,37 @@ cd /srv/metube
 sudo docker-compose up -d
 ```
 
+## 📺 Navidrome
 
+```bash
+sudo mkdir -p /srv/navidrome/data
+```
+
+```bash
+sudo nano /srv/navidrome/docker-compose.yml
+```
+
+```bash
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: "${UID:-1000}:${GID:-1000}"
+    ports:
+      - "4533:4533"
+    volumes:
+      - /srv/navidrome/data:/data
+      - /srv/metube/downloads:/music
+    environment:
+      ND_SCANINTERVAL: 1m
+      ND_LOGLEVEL: info
+    restart: unless-stopped
+```
+
+```bash
+cd /srv/navidrome
+sudo docker-compose up -d
+```
 
 ## 🎞️ yt-dlp-web-ui
 
