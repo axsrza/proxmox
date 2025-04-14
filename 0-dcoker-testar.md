@@ -1,18 +1,15 @@
-
-## Estrutura de pastas sugerida
-
-```bash
-mkdir -p ~/homelab/media/music
-mkdir -p ~/homelab/media/video
-```
-## yt-dlp-web-ui
+## 🎞️ yt-dlp-web-ui
 
 ```bash
-sudo mkdir -p ~/homelab/yt-dlp
-sudo nano ~/homelab/yt-dlp/docker-compose.yml
+sudo mkdir -p /srv/yt-dlp/downloads
+sudo mkdir -p /srv/yt-dlp/config
 ```
 
 ```bash
+sudo nano /srv/yt-dlp/docker-compose.yml
+```
+
+```yaml
 services:
   yt-dlp:
     container_name: yt-dlp
@@ -21,17 +18,17 @@ services:
       - "3033:3033"
     volumes:
       - ./config:/app/config
-      - ~/homelab/media:/downloads
+      - ./downloads:/downloads
     restart: unless-stopped
 ```
 
 ```bash
-sudo nano ~/homelab/yt-dlp/config/config.yml
+sudo nano /srv/yt-dlp/config/config.yml
 ```
 
-```bash
+```yaml
 port: 3033
-downloadPath: /downloads  # Corrigido aqui
+downloadPath: /downloads
 require_auth: false
 queue_size: 4
 downloaderPath: /usr/local/bin/yt-dlp
@@ -41,18 +38,24 @@ local_database_path: /app/local.db
 ```
 
 ```bash
-cd ~/homelab/yt-dlp
+cd /srv/yt-dlp
 sudo docker-compose up -d
 ```
 
-## Jellyfin
+---
+
+## 📺 Jellyfin
 
 ```bash
-sudo mkdir -p ~/homelab/jellyfin
-sudo nano ~/homelab/jellyfin/docker-compose.yml
+sudo mkdir -p /srv/jellyfin/config
+sudo mkdir -p /srv/jellyfin/media
 ```
 
 ```bash
+sudo nano /srv/jellyfin/docker-compose.yml
+```
+
+```yaml
 services:
   jellyfin:
     container_name: jellyfin
@@ -61,24 +64,28 @@ services:
       - "8096:8096"
     volumes:
       - ./config:/config
-      - ~/homelab/media/music:/media/music:ro
-      - ~/homelab/media/video:/media/video:ro
+      - ../yt-dlp/downloads:/media:ro
     restart: unless-stopped
 ```
 
 ```bash
-cd ~/homelab/jellyfin
+cd /srv/jellyfin
 sudo docker-compose up -d
 ```
 
-## Heimdall Dashboard
+---
+
+## 🧭 Heimdall Dashboard
 
 ```bash
-sudo mkdir -p ~/homelab/heimdall
-sudo nano ~/homelab/heimdall/docker-compose.yml
+sudo mkdir -p /srv/heimdall/config
 ```
 
 ```bash
+sudo nano /srv/heimdall/docker-compose.yml
+```
+
+```yaml
 services:
   heimdall:
     container_name: heimdall
@@ -96,6 +103,6 @@ services:
 ```
 
 ```bash
-cd ~/homelab/heimdall
+cd /srv/heimdall
 sudo docker-compose up -d
 ```
