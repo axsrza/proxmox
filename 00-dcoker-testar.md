@@ -1,8 +1,33 @@
+🎞️ metube
+
+```bash
+sudo mkdir -p /srv/metube/downloads
+```
+
+```bash
+services:
+  metube:
+    image: ghcr.io/alexta69/metube
+    container_name: metube
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./downloads:/downloads
+```
+
+```bash
+cd /srv/metube
+sudo docker-compose up -d
+```
+
+
+
 ## 🎞️ yt-dlp-web-ui
 
 ```bash
-sudo mkdir -p /srv/yt-dlp/downloads
-sudo mkdir -p /srv/yt-dlp/config
+cd /srv/metube
+sudo docker-compose up -d
 ```
 
 ```bash
@@ -65,6 +90,7 @@ services:
     volumes:
       - ./config:/config
       - ../yt-dlp/downloads:/media:ro
+      - ../metube/downloads:/media/metube:ro
     restart: unless-stopped
 ```
 
