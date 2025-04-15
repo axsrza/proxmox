@@ -1,19 +1,23 @@
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
 
+![Debian](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-installed-blue?logo=docker)
+![LVM](https://img.shields.io/badge/lvm-setup-purple)
+
 ## 📋 Sumário
 
-- [Pré-Instalação: Limpando o Disco](#pré-instalação-limpando-o-disco)
-- [Particionamento Manual com LVM](#particionamento-manual-com-lvm)
-- [Configuração de Rede com IP Fixo](#configuração-de-rede-com-ip-fixo)
-- [Instalar Docker + Docker Compose](#instalar-docker--docker-compose)
-- [Configurar Unbound como DNS Recursivo](#configurar-unbound-como-dns-recursivo)
-- [Instalar Pi-hole com Docker](#instalar-pi-hole-com-docker)
-- [Instalar Portainer](#instalar-portainer)
-- [Testes Finais](#testes-finais)
+- [📦 Pré-Instalação: Limpando o Disco](#pré-instalação-limpando-o-disco)
+- [🧱 Particionamento Manual com LVM](#particionamento-manual-com-lvm)
+- [🌐 Configuração de Rede com IP Fixo](#configuração-de-rede-com-ip-fixo)
+- [🐳 Instalar Docker + Docker Compose](#instalar-docker--docker-compose)
+- [🔐 Configurar Unbound como DNS Recursivo](#configurar-unbound-como-dns-recursivo)
+- [⚫ Instalar Pi-hole com Docker](#instalar-pi-hole-com-docker)
+- [📊 Instalar Portainer](#instalar-portainer)
+- [✅ Testes Finais](#testes-finais)
 
 ---
 
-## Pré-Instalação: Limpando o Disco
+## 📦 Pré-Instalação: Limpando o Disco
 
 1. No instalador do Debian, pressione `Ctrl + Alt + F2` para abrir o terminal.
 2. Execute:
@@ -24,7 +28,7 @@
 
 ---
 
-## Particionamento Manual com LVM
+## 🧱 Particionamento Manual com LVM
 
 1. Selecione `Manual` no particionamento.
 2. Crie uma nova partição primária com 110 GB e defina como `physical volume for LVM`.
@@ -54,7 +58,7 @@
 ip -c a
 ```
 
-### Senha root e Timezone
+### 🔐 Senha root e Timezone
 
 ```bash
 sudo passwd root
@@ -65,7 +69,9 @@ su
 timedatectl set-timezone America/Sao_Paulo
 ```
 
-##  IP Fixo (systemd-networkd)
+---
+
+## 🌐 IP Fixo (systemd-networkd)
 
 ```bash
 nano /etc/udev/rules.d/10-network.rules
@@ -89,7 +95,7 @@ DNS=192.168.1.1
 #DNS=127.0.0.1
 ```
 
-### resolv.conf
+### 🔧 resolv.conf
 
 ```bash
 rm /etc/resolv.conf
@@ -101,7 +107,7 @@ nameserver 192.168.1.1
 #nameserver 127.0.0.1
 ```
 
-### Ativar systemd-networkd
+### ⚙️ Ativar systemd-networkd
 
 ```bash
 systemctl enable --now systemd-networkd
@@ -111,7 +117,7 @@ reboot
 
 ---
 
-## Instalar Docker + Docker Compose
+## 🐳 Instalar Docker + Docker Compose
 
 ```bash
 sudo apt install iptables btop -y
@@ -135,7 +141,7 @@ docker-compose version
 
 ---
 
-## Configurar Unbound como DNS Recursivo
+## 🔐 Configurar Unbound como DNS Recursivo
 
 ```bash
 sudo apt install unbound -y
@@ -182,7 +188,7 @@ dig pi-hole.net @127.0.0.1 -p 5335
 
 ---
 
-## Instalar Pi-hole com Docker
+## ⚫ Instalar Pi-hole com Docker
 
 ```bash
 mkdir -p /opt/pihole
@@ -219,7 +225,7 @@ Use como DNS: `127.0.0.1#5335`
 
 ---
 
-## Instalar Portainer
+## 📊 Instalar Portainer
 
 ```bash
 mkdir -p /opt/portainer
@@ -249,7 +255,7 @@ docker-compose up -d
 
 ---
 
-## Testes Finais
+## ✅ Testes Finais
 
 ```bash
 ip -c a
@@ -261,3 +267,13 @@ docker volume ls
 docker compose ls
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
+
+---
+
+## 📎 Referências
+
+- https://github.com/pi-hole/docker-pi-hole
+- https://docs.docker.com/engine/install/debian/
+- https://wiki.debian.org/SystemdNetworkd
+- https://wiki.archlinux.org/title/Unbound
+
