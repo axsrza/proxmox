@@ -1,8 +1,12 @@
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
 
-![Debian](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-installed-blue?logo=docker)
+![Debian 12](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
 ![LVM](https://img.shields.io/badge/lvm-setup-purple)
+![Docker](https://img.shields.io/badge/docker-installed-blue?logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/docker--compose-configured-2496ED?logo=docker&logoColor=white)
+![Unbound](https://img.shields.io/badge/unbound-dns--resolver-yellow?logo=gnubash&logoColor=black)
+![Pi-hole](https://img.shields.io/badge/pi--hole-dns%20%2F%20dhcp-red?logo=pi-hole&logoColor=white)
+![Portainer](https://img.shields.io/badge/portainer-docker--ui-0db7ed?logo=portainer&logoColor=white)
 
 ## 📋 Sumário
 
