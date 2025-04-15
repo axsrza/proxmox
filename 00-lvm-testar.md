@@ -221,9 +221,19 @@ docker-compose up -d
 docker exec -it pihole pihole setpassword
 ```
 
-Use como DNS: `127.0.0.1#5335`
+Use como DNS no Pi-hole: `127.0.0.1#5335`
 
 ---
+
+Trocar para DNS Local: `127.0.0.1#5335`
+
+```bash
+nano /etc/systemd/network/10-wired.network
+```
+
+```bash
+nano /etc/resolv.conf
+```
 
 ## 📊 Instalar Portainer
 
