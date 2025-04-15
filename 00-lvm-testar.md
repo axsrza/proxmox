@@ -1,12 +1,21 @@
-fico assim então?
-
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
 
-## 📦 Pré-Instalação: Limpando o Disco
+## 📋 Sumário
 
-Antes de instalar o Debian 12, é recomendável apagar completamente o disco para evitar conflitos com partições antigas.
+- [Pré-Instalação: Limpando o Disco](#pré-instalação-limpando-o-disco)
+- [Particionamento Manual com LVM](#particionamento-manual-com-lvm)
+- [Configuração de Rede com IP Fixo](#configuração-de-rede-com-ip-fixo)
+- [Instalar Docker + Docker Compose](#instalar-docker--docker-compose)
+- [Configurar Unbound como DNS Recursivo](#configurar-unbound-como-dns-recursivo)
+- [Instalar Pi-hole com Docker](#instalar-pi-hole-com-docker)
+- [Instalar Portainer](#instalar-portainer)
+- [Testes Finais](#testes-finais)
 
-1. Assim que abrir o instalador, pressione `Ctrl + Alt + F2` para abrir um terminal.
+---
+
+## Pré-Instalação: Limpando o Disco
+
+1. No instalador do Debian, pressione `Ctrl + Alt + F2` para abrir o terminal.
 2. Execute:
    ```bash
    dd if=/dev/zero of=/dev/sda bs=1M count=10
@@ -15,72 +24,37 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
 
 ---
 
-## 📍 Particionamento Manual com LVM
+## Particionamento Manual com LVM
 
-### Etapas no Instalador
+1. Selecione `Manual` no particionamento.
+2. Crie uma nova partição primária com 110 GB e defina como `physical volume for LVM`.
+3. Configure o LVM:
+   - Crie volume group: `homelab-vg`
+   - Crie logical volumes:
+     - `root` → 10 GB
+     - `home` → 10 GB
+     - `var` → 10 GB
+     - `opt` → 10 GB
+     - `swap` → 2 GB
+4. Defina os pontos de montagem:
 
-1. Em "Partition disks":
-   ```
-   Manual
-   ```
-2. Escolha o disco:
-   ```
-   [ ] SCSI1 (0,0,0) (sda) - 120.0 GB ATA SSD
-   ```
-3. Confirme:
-   ```
-   Yes – Create a new empty partition table on this device
-   ```
-4. Crie a partição para LVM:
-   ```
-   > FREE SPACE (120.0 GB)
-     > Create a new partition
-   ```
-   - Tamanho: `110 GB`
-   - Tipo: `Primary`
-   - Localização: `Beginning`
-   - Use as: `physical volume for LVM`
-   - Finalize: `Done setting up the partition`
-
-5. Configure o LVM:
-   ```
-   Configure the Logical Volume Manager
-   ```
-6. Confirme:
-   ```
-   Write the changes to the disk and configure LVM? → Yes
-   ```
-7. Crie o volume group:
-   ```
-   Create volume group → homelab-vg
-   → selecione /dev/sda1
-   ```
-8. Crie os volumes lógicos:
-   - `root` → 10 GB
-   - `home` → 10 GB
-   - `var` → 10 GB
-   - `opt` → 10 GB
-   - `swap` → 2 GB
-
-Etapa 9 - Configuração do Sistema de Arquivos:
-
-/ → ext4 → /dev/mapper/homelab--vg-root
-
-/home → ext4 → /dev/mapper/homelab--vg-home
-
-/var → ext4 → /dev/mapper/homelab--vg-var
-
-/opt → ext4 → /dev/mapper/homelab--vg-opt
-
-swap → swap → /dev/mapper/homelab--vg-swap
+| Montagem | Tipo | Dispositivo |
+|----------|------|-------------|
+| `/`      | ext4 | `/dev/mapper/homelab--vg-root` |
+| `/home`  | ext4 | `/dev/mapper/homelab--vg-home` |
+| `/var`   | ext4 | `/dev/mapper/homelab--vg-var` |
+| `/opt`   | ext4 | `/dev/mapper/homelab--vg-opt` |
+| swap     | swap | `/dev/mapper/homelab--vg-swap` |
 
 ---
 
-## 🚀 Primeiro Boot e IP Fixo (systemd-networkd)
+## 🚀 Primeiro Boot
 
 ```bash
 ip -c a
 ```
+
+### Senha root e Timezone
 
 ```bash
 sudo passwd root
@@ -88,23 +62,20 @@ su
 ```
 
 ```bash
-sudo timedatectl set-timezone America/Sao_Paulo
+timedatectl set-timezone America/Sao_Paulo
 ```
 
-### Udev: Nome fixo para interface de rede
+##  IP Fixo (systemd-networkd)
 
 ```bash
-sudo nano /etc/udev/rules.d/10-network.rules
+nano /etc/udev/rules.d/10-network.rules
 ```
-
 ```bash
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:e0:4c:68:00:94", NAME="eth0"
 ```
 
-### systemd-networkd: IP fixo
-
 ```bash
-sudo nano /etc/systemd/network/10-wired.network
+nano /etc/systemd/network/10-wired.network
 ```
 
 ```ini
@@ -118,9 +89,11 @@ DNS=192.168.1.1
 #DNS=127.0.0.1
 ```
 
+### resolv.conf
+
 ```bash
-sudo rm /etc/resolv.conf
-sudo nano /etc/resolv.conf
+rm /etc/resolv.conf
+nano /etc/resolv.conf
 ```
 
 ```bash
@@ -128,15 +101,17 @@ nameserver 192.168.1.1
 #nameserver 127.0.0.1
 ```
 
+### Ativar systemd-networkd
+
 ```bash
-sudo systemctl enable --now systemd-networkd
-sudo systemctl disable --now networking
-sudo reboot
+systemctl enable --now systemd-networkd
+systemctl disable --now networking
+reboot
 ```
 
 ---
 
-## 🐳 Instalar Docker + Compose
+## Instalar Docker + Docker Compose
 
 ```bash
 sudo apt install iptables btop -y
@@ -148,27 +123,27 @@ curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/doc
 chmod a+r /etc/apt/keyrings/docker.asc
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
-  https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+  https://download.docker.com/linux/debian $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" \
   | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo docker run hello-world
-sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose version
 ```
 
 ---
 
-## ⚙️ Unbound como DNS Recursivo
+## Configurar Unbound como DNS Recursivo
 
 ```bash
 sudo apt install unbound -y
-sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
-sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
+sudo wget https://www.internic.net/domain/named.root -qO /var/lib/unbound/root.hints
+nano /etc/unbound/unbound.conf.d/pi-hole.conf
 ```
 
+Conteúdo:
 ```conf
 server:
     interface: 127.0.0.1
@@ -198,6 +173,8 @@ server:
     private-address: 2001:db8::/32
 ```
 
+Reinicie e teste:
+
 ```bash
 sudo systemctl restart unbound
 dig pi-hole.net @127.0.0.1 -p 5335
@@ -205,7 +182,7 @@ dig pi-hole.net @127.0.0.1 -p 5335
 
 ---
 
-## ❌ Pi-hole com Docker
+## Instalar Pi-hole com Docker
 
 ```bash
 mkdir -p /opt/pihole
@@ -238,30 +215,11 @@ docker-compose up -d
 docker exec -it pihole pihole setpassword
 ```
 
-Ajuste o DNS via Web UI:
-```
-127.0.0.1#5335
-```
+Use como DNS: `127.0.0.1#5335`
 
 ---
 
-## 📜 Ajustar DNS do Host
-
-```bash
-sudo nano /etc/systemd/network/10-wired.network
-```
-
-```bash
-sudo nano /etc/resolv.conf
-```
-
-```bash
-sudo reboot
-```
-
----
-
-## 🧭 Portainer via Docker
+## Instalar Portainer
 
 ```bash
 mkdir -p /opt/portainer
@@ -291,7 +249,7 @@ docker-compose up -d
 
 ---
 
-## ✅ Testes Finais
+## Testes Finais
 
 ```bash
 ip -c a
@@ -303,4 +261,3 @@ docker volume ls
 docker compose ls
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
-
