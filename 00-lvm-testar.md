@@ -11,7 +11,7 @@
 - [🌐 Configuração de Rede com IP Fixo](#configuração-de-rede-com-ip-fixo)
 - [🐳 Instalar Docker + Docker Compose](#instalar-docker--docker-compose)
 - [🔐 Configurar Unbound como DNS Recursivo](#configurar-unbound-como-dns-recursivo)
-- [⚫ Instalar Pi-hole com Docker](#instalar-pi-hole-com-docker)
+- [❌ Instalar Pi-hole com Docker](#instalar-pi-hole-com-docker)
 - [📊 Instalar Portainer](#instalar-portainer)
 - [✅ Testes Finais](#testes-finais)
 
@@ -52,13 +52,13 @@
 
 ---
 
-## 🚀 Primeiro Boot
+## 🚀 Primeiro boot - Via terminal Local
 
 ```bash
 ip -c a
 ```
 
-### 🔐 Senha root e Timezone
+### 🔐 Senha root e Timezone - Via PuTTY
 
 ```bash
 sudo passwd root
@@ -188,7 +188,7 @@ dig pi-hole.net @127.0.0.1 -p 5335
 
 ---
 
-## ⚫ Instalar Pi-hole com Docker
+## ❌ Instalar Pi-hole com Docker
 
 ```bash
 mkdir -p /opt/pihole
@@ -225,11 +225,13 @@ Use como DNS no Pi-hole: `127.0.0.1#5335`
 
 ---
 
-Trocar para DNS Local: `127.0.0.1`
+Comentar #DNS=192.168.1.1 e descomentar: `127.0.0.1`
 
 ```bash
 nano /etc/systemd/network/10-wired.network
 ```
+
+Comentar #nameserver 192.168.1.1 e descomentar: `127.0.0.1`
 
 ```bash
 nano /etc/resolv.conf
