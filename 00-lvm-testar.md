@@ -1,6 +1,4 @@
 
-# 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Docker-Compose, Unbound, Pi-hole e Portainer
-
 ![Debian 12](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
 ![LVM](https://img.shields.io/badge/lvm-setup-purple)
 ![Docker](https://img.shields.io/badge/docker-installed-blue?logo=docker&logoColor=white)
@@ -8,6 +6,8 @@
 ![Unbound](https://img.shields.io/badge/unbound-dns--resolver-yellow?logo=gnubash&logoColor=black)
 ![Pi-hole](https://img.shields.io/badge/pi--hole-dns%20%2F%20dhcp-red?logo=pi-hole&logoColor=white)
 ![Portainer](https://img.shields.io/badge/portainer-docker--ui-0db7ed?logo=portainer&logoColor=white)
+
+# 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Docker-Compose, Unbound, Pi-hole e Portainer
 
 ---
 
@@ -89,6 +89,8 @@ nano /etc/udev/rules.d/10-network.rules
 ```bash
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:e0:4c:68:00:94", NAME="eth0"
 ```
+
+---
 
 ```bash
 nano /etc/systemd/network/10-wired.network
