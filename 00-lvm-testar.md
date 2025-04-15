@@ -279,11 +279,3 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
 ---
-
-## 📎 Referências
-
-- https://github.com/pi-hole/docker-pi-hole
-- https://docs.docker.com/engine/install/debian/
-- https://wiki.debian.org/SystemdNetworkd
-- https://wiki.archlinux.org/title/Unbound
-
