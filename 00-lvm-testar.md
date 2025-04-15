@@ -1,3 +1,5 @@
+fico assim então?
+
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Unbound e Pi-hole
 
 ## 📦 Pré-Instalação: Limpando o Disco
@@ -34,7 +36,7 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
    > FREE SPACE (120.0 GB)
      > Create a new partition
    ```
-   - Tamanho: `119 GB`
+   - Tamanho: `110 GB`
    - Tipo: `Primary`
    - Localização: `Beginning`
    - Use as: `physical volume for LVM`
@@ -55,18 +57,21 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
    ```
 8. Crie os volumes lógicos:
    - `root` → 10 GB
-   - `var` → 10 GB
    - `home` → 10 GB
-   - `srv` → 30 GB
+   - `var` → 10 GB
+   - `opt` → 10 GB
    - `swap` → 2 GB
-   - Deixe 58 GB como espaço livre para expansão futura (snapshots, novos volumes, backups, etc.)
 
-9. Configure os sistemas de arquivos:
-   - `/` → ext4 → `/dev/mapper/homelab--vg-root`
-   - `/home` → ext4 → `/dev/mapper/homelab--vg-home`
-   - `/var` → ext4 → `/dev/mapper/homelab--vg-var`
-   - `/srv` → ext4 → `/dev/mapper/homelab--vg-srv`
-   - `swap` → swap → `/dev/mapper/homelab--vg-swap`
+Etapa 9 - Configuração do Sistema de Arquivos:
+/ → ext4 → /dev/mapper/homelab--vg-root
+
+/home → ext4 → /dev/mapper/homelab--vg-home
+
+/var → ext4 → /dev/mapper/homelab--vg-var
+
+/opt → ext4 → /dev/mapper/homelab--vg-opt
+
+swap → swap → /dev/mapper/homelab--vg-swap
 
 ---
 
@@ -202,8 +207,8 @@ dig pi-hole.net @127.0.0.1 -p 5335
 ## ❌ Pi-hole com Docker
 
 ```bash
-mkdir -p /srv/pihole
-nano /srv/pihole/docker-compose.yml
+mkdir -p /opt/pihole
+nano /opt/pihole/docker-compose.yml
 ```
 
 ```yaml
@@ -224,7 +229,7 @@ services:
 ```
 
 ```bash
-cd /srv/pihole
+cd /opt/pihole
 docker-compose up -d
 ```
 
@@ -258,8 +263,8 @@ sudo reboot
 ## 🧭 Portainer via Docker
 
 ```bash
-mkdir -p /srv/portainer
-nano /srv/portainer/docker-compose.yml
+mkdir -p /opt/portainer
+nano /opt/portainer/docker-compose.yml
 ```
 
 ```yaml
@@ -279,7 +284,7 @@ volumes:
 ```
 
 ```bash
-cd /srv/portainer
+cd /opt/portainer
 docker-compose up -d
 ```
 
