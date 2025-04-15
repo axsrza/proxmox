@@ -23,6 +23,10 @@ mkdir -p /srv/radio
 cd /srv/radio
 ```
 
+```bash
+nano docker-compose.yml
+```
+
 ### 2. Criar o `docker-compose.yml`
 
 ```yaml
@@ -50,6 +54,10 @@ services:
       - ./mpd.conf:/etc/mpd.conf
     ports:
       - "6600:6600"
+```
+
+```bash
+nano mpd.conf
 ```
 
 ### 3. Criar o arquivo `mpd.conf`
