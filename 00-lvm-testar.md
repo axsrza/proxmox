@@ -1,6 +1,8 @@
 
 ---
+
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Docker-Compose, Unbound, Pi-hole e Portainer
+
 ---
 
 ![Debian 12](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
@@ -83,6 +85,7 @@ timedatectl set-timezone America/Sao_Paulo
 ```bash
 nano /etc/udev/rules.d/10-network.rules
 ```
+
 ```bash
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:e0:4c:68:00:94", NAME="eth0"
 ```
