@@ -1,6 +1,6 @@
----
+
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Docker-Compose, Unbound, Pi-hole e Portainer
----
+
 ![Debian 12](https://img.shields.io/badge/debian-12-lightgrey?logo=debian&logoColor=white)
 ![LVM](https://img.shields.io/badge/lvm-setup-purple)
 ![Docker](https://img.shields.io/badge/docker-installed-blue?logo=docker&logoColor=white)
@@ -8,6 +8,8 @@
 ![Unbound](https://img.shields.io/badge/unbound-dns--resolver-yellow?logo=gnubash&logoColor=black)
 ![Pi-hole](https://img.shields.io/badge/pi--hole-dns%20%2F%20dhcp-red?logo=pi-hole&logoColor=white)
 ![Portainer](https://img.shields.io/badge/portainer-docker--ui-0db7ed?logo=portainer&logoColor=white)
+
+---
 
 ## 📋 Sumário
 
@@ -63,6 +65,8 @@
 ip -c a
 ```
 
+---
+
 ### 🔐 Senha root e Timezone - Via PuTTY
 
 ```bash
@@ -101,6 +105,8 @@ DNS=192.168.1.1
 #DNS=127.0.0.1
 ```
 
+---
+
 ### 🔧 resolv.conf
 
 ```bash
@@ -112,6 +118,8 @@ nano /etc/resolv.conf
 nameserver 192.168.1.1
 #nameserver 127.0.0.1
 ```
+
+---
 
 ### ⚙️ Ativar systemd-networkd
 
@@ -242,6 +250,8 @@ Comentar #nameserver 192.168.1.1 e descomentar: `127.0.0.1`
 ```bash
 nano /etc/resolv.conf
 ```
+
+---
 
 ## 📊 Instalar Portainer
 
