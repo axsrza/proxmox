@@ -63,6 +63,7 @@ Antes de instalar o Debian 12, é recomendável apagar completamente o disco par
    - `swap` → 2 GB
 
 Etapa 9 - Configuração do Sistema de Arquivos:
+
 / → ext4 → /dev/mapper/homelab--vg-root
 
 /home → ext4 → /dev/mapper/homelab--vg-home
