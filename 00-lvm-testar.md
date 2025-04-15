@@ -112,7 +112,7 @@ nameserver 192.168.1.1
 ```bash
 systemctl enable --now systemd-networkd
 systemctl disable --now networking
-reboot
+sudo reboot
 ```
 
 ---
