@@ -9,8 +9,6 @@
 
 # 🛠️ Homelab Setup - Debian 12 Minimal com LVM, Docker, Docker-Compose, Unbound, Pi-hole e Portainer
 
----
-
 ## 📋 Sumário
 
 - [📦 Pré-Instalação: Limpando o Disco](#pré-instalação-limpando-o-disco)
