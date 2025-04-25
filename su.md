@@ -154,11 +154,9 @@ sudo nano /opt/blog/encantare/index.html
     <div class="section">
       <h2 class="title">Galeria de Estilo</h2>
       <div class="gallery">
-        <img src="1.jpg" alt="Unha 1"/>
-        <img src="2.jpg" alt="Unha 2"/>
-        <img src="3.jpg" alt="Unha 3"/>
-        <img src="4.jpg" alt="Unha 4"/>
-        <img src="5.jpg" alt="Unha 5"/>
+        <img src="https://i.pinimg.com/736x/af/4b/d0/af4bd023dbbe713d3197ecf8ef50fc10.jpg" alt="Unha 1"/>
+        <img src="https://i.pinimg.com/736x/15/97/8f/15978f1cb815576340c4b31991aa8ea3.jpg" alt="Unha 3"/>
+        <img src="https://i.pinimg.com/736x/f1/41/88/f141880276193c4c1435ed53026ecc9c.jpg" alt="Unha 4"/>
       </div>
     </div>
 
