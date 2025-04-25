@@ -13,6 +13,7 @@ sudo nano /opt/blog/encantare/index.html
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Encantare Nails</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -21,7 +22,7 @@ sudo nano /opt/blog/encantare/index.html
     }
 
     body, html {
-      font-family: 'Helvetica Neue', sans-serif;
+      font-family: 'Poppins', sans-serif;
       color: #fff;
       background-color: #0e0e0e;
       scroll-behavior: smooth;
@@ -37,11 +38,12 @@ sudo nano /opt/blog/encantare/index.html
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 177.77vh; /* 100 * (16 / 9) */
-      height: 100vh;
+      width: 100vw;
+      height: 56.25vw; /* Manter a proporção 16:9 */
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 1;
+      filter: brightness(60%);
     }
 
     .overlay {
@@ -50,7 +52,7 @@ sudo nano /opt/blog/encantare/index.html
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
       z-index: 2;
     }
 
@@ -61,40 +63,60 @@ sudo nano /opt/blog/encantare/index.html
       z-index: 3;
       transform: translate(-50%, -50%);
       text-align: center;
+      font-family: 'Playfair Display', serif;
     }
 
     .hero-text h1 {
-      font-size: 3em;
-      letter-spacing: 4px;
-      font-weight: 300;
+      font-size: 4em;
+      letter-spacing: 5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      color: #ffc0cb;
     }
 
     .container {
       padding: 60px 20px;
       max-width: 1000px;
       margin: 0 auto;
+      z-index: 10;
     }
 
     .title {
-      font-size: 2em;
+      font-size: 2.5em;
       margin-bottom: 20px;
       color: #ffc0cb;
+      font-family: 'Playfair Display', serif;
     }
 
     .section {
       margin-bottom: 60px;
     }
 
+    .section p {
+      font-size: 1.2em;
+      line-height: 1.6;
+      font-weight: 300;
+      color: #ddd;
+      margin-bottom: 30px;
+    }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
+      margin-top: 30px;
     }
 
     .gallery img {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 15px;
       object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
     }
 
     .buttons {
@@ -107,18 +129,21 @@ sudo nano /opt/blog/encantare/index.html
     .btn {
       background: #ffc0cb;
       color: #000;
-      padding: 15px 30px;
+      padding: 15px 40px;
       border: none;
-      border-radius: 30px;
-      font-size: 1em;
+      border-radius: 50px;
+      font-size: 1.2em;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.3s ease;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
 
     .btn:hover {
       background: #fff;
       color: #000;
+      transform: translateY(-5px);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
     }
 
     footer {
@@ -127,8 +152,19 @@ sudo nano /opt/blog/encantare/index.html
       text-align: center;
       font-size: 0.9em;
       color: #777;
+      margin-top: 50px;
+      letter-spacing: 2px;
     }
 
+    footer a {
+      color: #ffc0cb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -148,7 +184,7 @@ sudo nano /opt/blog/encantare/index.html
   <div class="container">
     <div class="section">
       <h2 class="title">Beleza que Encanta</h2>
-      <p>Especializadas em alongamento de unhas e esmaltação em gel, trazemos arte, cuidado e sofisticação para suas mãos.</p>
+      <p>Especializada em alongamento de unhas e esmaltação em gel, trazendo arte, cuidado e sofisticação para suas mãos.</p>
     </div>
 
     <div class="section">
@@ -161,16 +197,14 @@ sudo nano /opt/blog/encantare/index.html
     </div>
 
     <div class="section">
-      <h2 class="title">Conecte-se Conosco</h2>
       <div class="buttons">
-        <a class="btn" href="https://wa.me/seunumero" target="_blank">Agendar pelo WhatsApp</a>
-        <a class="btn" href="https://instagram.com/seuinstagram" target="_blank">Ver no Instagram</a>
+        <a class="btn" href="https://wa.me/5547997210373" target="_blank">Agendar pelo WhatsApp</a>
       </div>
     </div>
   </div>
 
   <footer>
-    © 2025 Encantare Nails — Joinville/SC
+    © 2025 Encantare Nails — Joinville/SC | <a href="https://www.instagram.com/encantare_nails/" target="_blank">Instagram</a>
   </footer>
 
 </body>
