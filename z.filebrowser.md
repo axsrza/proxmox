@@ -14,6 +14,7 @@ filebrowser -a 0.0.0.0 -r /
 ```
 
 
+## Ativar homelab outra porta
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
