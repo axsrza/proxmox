@@ -218,3 +218,14 @@ self.addEventListener('fetch', event => {
 ```
 
 ---
+
+## imagens
+
+```bash
+screenshot-mobile.png
+screenshot-desktop.png
+icon-512.png
+icon-192.png
+```
+
+---
