@@ -41,14 +41,14 @@
         </div>
 
         <div class="text-xs text-gray-400 text-center mb-4">
-            <p>Esta rádio é um projeto pessoal, sem fins lucrativos.  Os louvores são usados apenas com o propósito de tocar no coração de amigos, familiares e quem mais ouvir. Caso você seja o artista ou detentor dos direitos e deseje que o conteúdo seja removido, entre em contato e será retirado imediatamente com respeito e gratidão.</p>
+            <p>Esta rádio é um projeto pessoal, sem fins lucrativos. Os louvores são usados apenas com o propósito de tocar no coração de amigos, familiares e quem mais ouvir. Caso você seja o artista ou detentor dos direitos e deseje que o conteúdo seja removido, entre em contato e será retirado imediatamente com respeito e gratidão.</p>
         </div>
 
         <div class="flex justify-center space-x-4">
-            <a href="https://wa.me/" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
+            <a href="https://wa.me/5547992280371" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
                 <i class="fab fa-whatsapp text-xl"></i>
             </a>
-            <a href="https://instagram.com/" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
+            <a href="https://www.instagram.com/azzor1337x/" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
                 <i class="fab fa-instagram text-xl"></i>
             </a>
         </div>
