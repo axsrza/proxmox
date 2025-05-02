@@ -85,7 +85,7 @@
         </div>
         
         <div class="text-xs text-gray-400 text-center mb-4">
-            <p>Esta rádio é sem fins lucrativos. Os louvores são usados apenas com o propósito de tocar corações e aproximar amigos, familiares e ouvintes de Deus. Caso algum artista deseje a remoção de um conteúdo, entre em contato.</p>
+            <p>Esta rádio é um projeto pessoal, sem fins lucrativos.  Os louvores são usados apenas com o propósito de tocar no coração de amigos, familiares e quem mais ouvir. Caso você seja o artista ou detentor dos direitos e deseje que o conteúdo seja removido, entre em contato e será retirado imediatamente com respeito e gratidão.</p>
         </div>
         
         <div class="flex justify-center space-x-4">
@@ -204,8 +204,6 @@ resize2fs /dev/ubuntu-vg/ubuntu-lv
 sudo reboot
 
 ```
-
-
 
 ## radio html
 
