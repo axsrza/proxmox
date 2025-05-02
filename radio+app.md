@@ -14,14 +14,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
 </head>
-<body class="font-sans text-gray-100 flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;">
+<body class="font-sans text-gray-100 flex flex-col items-center justify-center p-4" style="background-color: #000000; min-height: 100vh;">
     <div class="bg-[rgba(15,23,42,0.85)] rounded-xl shadow-2xl p-8 player-container w-full max-w-md">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold mb-2">Rádio</h1>
             <p class="text-gray-300">em construção</p>
         </div>
 
-        <div class="flex flex-col items-center mb-8">
+        <div class="flex flex-col items-center mb-8 space-y-4">
             <button id="playButton" class="bg-black bg-opacity-70 hover:bg-opacity-100 text-white rounded-full w-16 h-16 flex items-center justify-center mb-4 transition-all duration-200">
                 <i id="playIcon" class="fas fa-play text-2xl"></i>
             </button>
@@ -66,6 +66,19 @@
 
         let isPlaying = false;
 
+        // Função para tentar reproduzir automaticamente
+        window.addEventListener('load', () => {
+            // Tentar iniciar o áudio automaticamente
+            radioStream.play().then(() => {
+                console.log("Áudio iniciado automaticamente");
+                playIcon.className = 'fas fa-pause text-2xl';  // Atualiza o ícone para 'pause'
+                isPlaying = true;  // Marca como tocando
+            }).catch((e) => {
+                console.log("Autoplay bloqueado:", e);
+            });
+        });
+
+        // Evento de clique para alternar entre play e pause
         playButton.addEventListener('click', function () {
             if (isPlaying) {
                 radioStream.pause();
@@ -77,12 +90,14 @@
             isPlaying = !isPlaying;
         });
 
+        // Controle de volume
         volumeControl.addEventListener('input', function () {
             radioStream.volume = this.value;
         });
 
         radioStream.volume = volumeControl.value;
 
+        // Versículo do dia
         const bibleVerses = [
             '"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito..." - João 3:16',
             '"O Senhor é o meu pastor; nada me faltará." - Salmos 23:1',
@@ -99,6 +114,7 @@
 
         document.getElementById('bibleVerse').textContent = getDailyVerse();
 
+        // Registrar Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
@@ -205,12 +221,3 @@ self.addEventListener('fetch', event => {
 
 ```
 
-
-
-
-
----
-
-```bash
-
-```
