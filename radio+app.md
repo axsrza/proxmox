@@ -1,6 +1,8 @@
 
 ---
 
+## index.html
+
 ```bash
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -129,6 +131,8 @@
 
 ---
 
+## manifest.json
+
 ```bash
 {
   "name": "Rádio",
@@ -166,6 +170,8 @@
 ```
 
 ---
+
+## sw.js
 
 ```bash
 const CACHE_NAME = 'radio-cache-v1';
@@ -211,13 +217,4 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-
-
-
-
 ---
-
-```bash
-
-```
-
