@@ -1,6 +1,28 @@
 ## Expandir 100% do ssd
 
 ```bash
+Crie um site de uma rádio cristã chamada "Azzor1337x Rádio". O visual deve ser minimalista e responsivo, com fundo estático de céu (céu azul com nuvens ou entardecer, algo tranquilo). Todo o estilo do site (botões, texto, menus) deve ser em preto ou tons escuros, com um toque elegante.
+
+O site deve ter apenas:
+
+Um botão de play/pause simples (sem animações), tocando o streaming em https://radio.azzor1337x.shop/radio.mp3
+
+Um controle de volume funcional
+
+Um pequeno espaço para exibir um versículo bíblico por dia, puxado do site https://www.bibliaonline.com.br/ ou um mock placeholder no estilo “Versículo do dia: João 3:16 - Porque Deus amou o mundo...”
+
+Uma nota discreta dizendo: "Esta rádio é sem fins lucrativos. Os louvores são usados apenas com o propósito de tocar corações e aproximar amigos, familiares e ouvintes de Deus. Caso algum artista deseje a remoção de um conteúdo, entre em contato."
+
+Ícones ou links pequenos para WhatsApp e Instagram no rodapé.
+
+O site deve ser leve, rápido e adaptável para ser instalado como app via navegador (PWA - Progressive Web App) em celulares Android. O áudio deve tocar direto no navegador (sem pop-ups), e compatível com HTTPS ou HTTP se possível.
+```
+
+
+
+## Expandir 100% do ssd
+
+```bash
 lsblk
 lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
 resize2fs /dev/ubuntu-vg/ubuntu-lv
