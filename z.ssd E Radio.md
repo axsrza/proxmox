@@ -1,21 +1,196 @@
 ## Expandir 100% do ssd
 
 ```bash
-Crie um site de uma rádio cristã chamada "Azzor1337x Rádio". O visual deve ser minimalista e responsivo, com fundo estático de céu (céu azul com nuvens ou entardecer, algo tranquilo). Todo o estilo do site (botões, texto, menus) deve ser em preto ou tons escuros, com um toque elegante.
-
-O site deve ter apenas:
-
-Um botão de play/pause simples (sem animações), tocando o streaming em https://radio.azzor1337x.shop/radio.mp3
-
-Um controle de volume funcional
-
-Um pequeno espaço para exibir um versículo bíblico por dia, puxado do site https://www.bibliaonline.com.br/ ou um mock placeholder no estilo “Versículo do dia: João 3:16 - Porque Deus amou o mundo...”
-
-Uma nota discreta dizendo: "Esta rádio é sem fins lucrativos. Os louvores são usados apenas com o propósito de tocar corações e aproximar amigos, familiares e ouvintes de Deus. Caso algum artista deseje a remoção de um conteúdo, entre em contato."
-
-Ícones ou links pequenos para WhatsApp e Instagram no rodapé.
-
-O site deve ser leve, rápido e adaptável para ser instalado como app via navegador (PWA - Progressive Web App) em celulares Android. O áudio deve tocar direto no navegador (sem pop-ups), e compatível com HTTPS ou HTTP se possível.
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rádio - em construção">
+    <meta name="theme-color" content="#1E293B">
+    <title>Rádio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .bg-semi-dark {
+            background-color: rgba(15, 23, 42, 0.85);
+        }
+        
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #334155;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 640px) {
+            .player-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-100 flex flex-col items-center justify-center p-4">
+    <div class="bg-semi-dark rounded-xl shadow-2xl p-8 player-container w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">Rádio</h1>
+            <p class="text-gray-300">em contrução</p>
+        </div>
+        
+        <div class="flex flex-col items-center mb-8">
+            <button id="playButton" class="bg-black bg-opacity-70 hover:bg-opacity-100 text-white rounded-full w-16 h-16 flex items-center justify-center mb-4 transition-all duration-200">
+                <i id="playIcon" class="fas fa-play text-2xl"></i>
+            </button>
+            
+            <div class="w-full max-w-xs">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-volume-down text-gray-300"></i>
+                    <input type="range" id="volumeControl" class="volume-slider" min="0" max="1" step="0.01" value="0.1">
+                    <i class="fas fa-volume-up text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-black bg-opacity-50 rounded-lg p-4 mb-8">
+            <h3 class="font-semibold text-center mb-2">Versículo do dia</h3>
+            <p id="bibleVerse" class="text-center italic text-gray-200">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna." - João 3:16</p>
+        </div>
+        
+        <div class="text-xs text-gray-400 text-center mb-4">
+            <p>Esta rádio é sem fins lucrativos. Os louvores são usados apenas com o propósito de tocar corações e aproximar amigos, familiares e ouvintes de Deus. Caso algum artista deseje a remoção de um conteúdo, entre em contato.</p>
+        </div>
+        
+        <div class="flex justify-center space-x-4">
+            <a href="https://wa.me/" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
+                <i class="fab fa-whatsapp text-xl"></i>
+            </a>
+            <a href="https://instagram.com/" target="_blank" class="text-gray-300 hover:text-white transition-colors duration-200">
+                <i class="fab fa-instagram text-xl"></i>
+            </a>
+        </div>
+    </div>
+    
+    <audio id="radioStream" preload="none">
+        <source src="http://radio.azzor1337x.shop/radio.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // Audio player functionality
+        const radioStream = document.getElementById('radioStream');
+        const playButton = document.getElementById('playButton');
+        const playIcon = document.getElementById('playIcon');
+        const volumeControl = document.getElementById('volumeControl');
+        
+        let isPlaying = false;
+        
+        // Play/Pause functionality
+        playButton.addEventListener('click', function() {
+            if (isPlaying) {
+                radioStream.pause();
+                playIcon.className = 'fas fa-play text-2xl';
+            } else {
+                radioStream.play().catch(e => console.log('Autoplay prevented:', e));
+                playIcon.className = 'fas fa-pause text-2xl';
+            }
+            isPlaying = !isPlaying;
+        });
+        
+        // Volume control
+        volumeControl.addEventListener('input', function() {
+            radioStream.volume = this.value;
+        });
+        
+        // Set initial volume
+        radioStream.volume = volumeControl.value;
+        
+        // Bible verse of the day (mock - in a real app you would fetch this from an API)
+        const bibleVerses = [
+            '"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna." - João 3:16',
+            '"O Senhor é o meu pastor; nada me faltará." - Salmos 23:1',
+            '"Tudo posso naquele que me fortalece." - Filipenses 4:13',
+            '"Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará." - Salmos 37:5',
+            '"Porque eu bem sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais." - Jeremias 29:11'
+        ];
+        
+        // Get a random verse (or use date to get the same verse each day)
+        function getDailyVerse() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            return bibleVerses[dayOfYear % bibleVerses.length];
+        }
+        
+        document.getElementById('bibleVerse').textContent = getDailyVerse();
+        
+        // PWA Service Worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+    
+    <script>
+        // Manifest for PWA
+        const manifest = {
+            "name": "Rádio",
+            "short_name": "Rádio",
+            "description": "Rádio",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#0F172A",
+            "theme_color": "#0F172A",
+            "icons": [
+                {
+                    "src": "https://via.placeholder.com/192x192.png?text=Rádio",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://via.placeholder.com/512x512.png?text=Rádio",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.querySelector('link[rel="manifest"]').href = manifestURL;
+    </script>
+</body>
+</html>
 ```
 
 
