@@ -1,6 +1,46 @@
 
 ---
 
+## manifest.json
+
+```bash
+{
+  "name": "Rádio",
+  "short_name": "Rádio",
+  "description": "Rádio",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1440x900",
+      "type": "image/png"
+    }
+  ]
+}
+```
+
+---
+
 ## sw.js
 
 ```bash
