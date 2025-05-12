@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/favicon.ico" />
 
   <!-- Manifest for PWA -->
   <link rel="manifest" href="/manifest.json" />
