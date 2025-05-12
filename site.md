@@ -68,7 +68,7 @@
   </audio>
 
   <audio id="introStream" preload="auto">
-    <source src="vinheta.mp3" type="audio/mpeg" />
+    <source src="intro.mp3" type="audio/mpeg" />
   </audio>
 
   <script>
@@ -82,13 +82,13 @@
     let isPlaying = false;
 
     window.addEventListener('load', () => {
-      // Inicia rádio e vinheta ao carregar a página
+      // Inicia rádio e intro ao carregar a página
       Promise.all([
         radioStream.play().catch(e => console.log("Erro ao tocar rádio:", e)),
-        introStream.play().catch(e => console.log("Erro ao tocar vinheta:", e))
+        introStream.play().catch(e => console.log("Erro ao tocar intro:", e))
       ]).then(() => {
         playIcon.className = 'fas fa-pause text-2xl';
-        statusText.textContent = "Tocando!";
+        statusText.textContent = "Em adoração!";
         isPlaying = true;
       }).catch(e => {
         console.log("Autoplay bloqueado:", e);
@@ -107,7 +107,7 @@
           await radioStream.play();
           await introStream.play();
           playIcon.className = 'fas fa-pause text-2xl';
-          statusText.textContent = "Tocando!";
+          statusText.textContent = "Em adoração!";
           isPlaying = true;
         } catch (error) {
           console.error("Erro ao tocar áudio:", error);
@@ -125,7 +125,7 @@
     introStream.volume = volumeControl.value;
 
     radioStream.addEventListener('canplay', () => {
-      statusText.textContent = "Pronto para tocar!";
+      statusText.textContent = "Pronto para louvar!";
     });
 
     radioStream.addEventListener('error', () => {
