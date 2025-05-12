@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Rádio - em construção" />
+  <meta name="description" content="ROARRadio - O rugido do Leão que acalma o coração" />
   <meta name="theme-color" content="#1E293B" />
   <title>Rádio</title>
 
@@ -24,8 +24,8 @@
 
   <div class="bg-[rgba(15,23,42,0.85)] rounded-xl shadow-2xl p-8 player-container w-full max-w-md">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold mb-2">Rádio</h1>
-      <p class="text-gray-300">em construção</p>
+      <h1 class="text-3xl font-bold mb-2">ROARRadio</h1>
+      <p class="text-gray-300">O rugido do Leão que acalma o coração</p>
     </div>
 
     <div class="flex flex-col items-center mb-8 space-y-4">
