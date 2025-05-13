@@ -21,6 +21,7 @@ iface eth0 inet static
 ```
 
 ```
+rm -rf /etc/resolv.conf
 nano /etc/resolv.conf
 ```
 
