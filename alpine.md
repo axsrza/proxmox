@@ -40,9 +40,6 @@ ip a show eth0
 
 ```
 ping -c 3 1.1.1.1
-```
-
-```
 ping -c 3 google.com
 ```
 
@@ -50,6 +47,9 @@ ping -c 3 google.com
 
 ```
 apk add iptables
+```
+
+```
 rc-update add iptables boot
 service iptables start
 ```
