@@ -508,7 +508,7 @@ nano /home/radio/offline.html
 # Icecast
 
 ```
-service icecast start
+apk add icecast
 ```
 
 ```
