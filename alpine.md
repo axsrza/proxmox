@@ -1,8 +1,13 @@
 
-# Internet + DNS
+# Editor de Texto
 
 ```
 apk add nano
+```
+
+# Internet + DNS
+
+```
 rm -rf /etc/network/interfaces
 nano /etc/network/interfaces
 ```
