@@ -2,6 +2,7 @@
 # Internet + DNS
 
 ```
+apk add nano
 nano /etc/network/interfaces
 ```
 
