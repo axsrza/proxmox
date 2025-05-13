@@ -524,14 +524,14 @@ services:
     image: savonet/liquidsoap:v2.3.2
     container_name: liquidsoap
     volumes:
-      - ./radio.liq:/etc/liquidsoap/radio.liq
+      - /home/radio/radio.liq:/etc/liquidsoap/radio.liq
       - /home/music:/home/music
     restart: unless-stopped
-    command: ["liquidsoap", "/etc/liquidsoap/radio.liq"]
+    command: [liquidsoap, /etc/liquidsoap/radio.liq]
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - host.docker.internal:host-gateway
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://host.docker.internal:8000/radio.mp3"]
+      test: [CMD, curl, -f, https://host.docker.internal:8000/radio.mp3]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -567,8 +567,20 @@ services:
     image: nginx:alpine
     container_name: radio
     ports:
-      - "8001:80"
+      - 8001:80
     volumes:
-      - .:/usr/share/nginx/html:ro
+      - /home/radio:/usr/share/nginx/html:ro
     restart: unless-stopped
+```
+
+# File Browser
+
+```
+apk add curl
+apk add bash
+```
+
+```
+curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
+filebrowser -a 0.0.0.0 -p 8888 -r /
 ```
