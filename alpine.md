@@ -265,7 +265,7 @@ nano /home/radio/index.html
   </div>
 
   <audio id="radioStream" preload="none">
-    <source src="https://radio.azzor1337x.shop/radio.mp3" type="audio/mpeg" />
+    <source src="https://roarradio.site/radio.mp3" type="audio/mpeg" />
   </audio>
 
   <audio id="introStream" preload="auto">
@@ -515,7 +515,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://host.docker.internal:8000/radio.mp3"]
+      test: ["CMD", "curl", "-f", "https://host.docker.internal:8000/radio.mp3"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -536,9 +536,9 @@ output.icecast(%mp3,
   port = 8000,
   password = "hackme",
   mount = "/radio.mp3",
-  name = "radio",
-  description = "em costrução",
-  url = "http://radio.azzor1337x.shop/radio.mp3",
+  name = "ROARRadio",
+  description = "O rugido do Leao que toca o coracao",
+  url = "https://roarradio.site/radio.mp3",
   public = true,
   radio)
 ```
@@ -556,4 +556,3 @@ services:
       - .:/usr/share/nginx/html:ro
     restart: unless-stopped
 ```
-
