@@ -512,7 +512,6 @@ apk add icecast
 ```
 
 ```
-apk add icecast
 rc-update add icecast boot
 service icecast start
 ```
