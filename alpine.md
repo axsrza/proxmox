@@ -70,6 +70,9 @@ http://dl-cdn.alpinelinux.org/alpine/v3.21/community
 ```
 apk update
 apk add docker
+```
+
+```
 rc-update add docker boot
 service docker start
 ```
