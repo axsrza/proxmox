@@ -3,6 +3,7 @@
 
 ```
 apk add nano
+rm -rf /etc/network/interfaces
 nano /etc/network/interfaces
 ```
 
