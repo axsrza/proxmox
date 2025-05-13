@@ -155,11 +155,11 @@ services:
     restart: unless-stopped
 ```
 
-# Apos acessar o pihole com a nova senha, desabilite o dns cadastrado e use este: `127.0.0.1#5335`
-
 ```
 docker exec -it pihole pihole setpassword
 ```
+
+## Apos acessar o pihole com a nova senha, desabilite o dns cadastrado e use este: `127.0.0.1#5335`
 
 # Local DNS
 
@@ -174,16 +174,4 @@ nameserver 127.0.0.1
 
 ```
 ifdown eth0 && ifup eth0
-```
-
-```
-ip a show eth0
-```
-
-```
-ping -c 3 1.1.1.1
-```
-
-```
-ping -c 3 google.com
 ```
