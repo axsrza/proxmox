@@ -176,6 +176,7 @@ docker exec -it pihole pihole setpassword
 # Local DNS
 
 ```
+rm -rf /etc/resolv.conf
 nano /etc/resolv.conf
 ```
 
