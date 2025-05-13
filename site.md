@@ -37,7 +37,8 @@
 </head>
 <body class="font-sans text-yellow-100 bg-[#111827] flex flex-col items-center justify-center p-4 min-h-screen">
 
-  <div class="bg-[#1f2937cc] backdrop-blur-xl rounded-xl shadow-2xl p-8 player-container w-full max-w-md">
+  <!-- Remover o fundo, opacidade e sombra aqui -->
+  <div class="rounded-xl p-8 player-container w-full max-w-md"> <!-- Apenas removi as classes de fundo e sombra -->
     <div class="text-center mb-8">
       <h1 class="text-4xl font-bold text-yellow-400 mb-2">ROARRadio</h1>
       <p class="text-yellow-200">O rugido do Leão que toca o coração</p>
