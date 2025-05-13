@@ -508,6 +508,10 @@ nano /home/radio/offline.html
 # Icecast
 
 ```
+service icecast start
+```
+
+```
 apk add icecast
 rc-update add icecast boot
 service icecast start
