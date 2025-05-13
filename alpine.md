@@ -57,6 +57,7 @@ service iptables start
 # Docker
 
 ```
+rm -rf /etc/apk/repositories
 nano /etc/apk/repositories
 ```
 
