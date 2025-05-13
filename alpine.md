@@ -19,6 +19,7 @@ nano /etc/resolv.conf
 
 ```
 nameserver 192.168.1.1
+#nameserver 127.0.0.1
 ```
 
 ```
@@ -122,4 +123,67 @@ service unbound start
 ```
 apk add bind-tools
 dig pi-hole.net @127.0.0.1 -p 5335
+```
+
+# Portainer
+
+```
+docker volume create portainer_data
+docker run -d -p 9000:9000 -p 9443:9443 --name portainer \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  portainer/portainer-ce:latest
+```
+
+# Criar Stack do Pihole no Portainer
+
+```
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: host
+    environment:
+      - TZ=America/Sao_Paulo
+      - WEBPASSWORD=
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+```
+
+# Apos acessar o pihole com a nova senha, desabilite o dns cadastrado e use este: `127.0.0.1#5335`
+
+```
+docker exec -it pihole pihole setpassword
+```
+
+# Local DNS
+
+```
+nano /etc/resolv.conf
+```
+
+```
+#nameserver 192.168.1.1
+nameserver 127.0.0.1
+```
+
+```
+ifdown eth0 && ifup eth0
+```
+
+```
+ip a show eth0
+```
+
+```
+ping -c 3 1.1.1.1
+```
+
+```
+ping -c 3 google.com
 ```
