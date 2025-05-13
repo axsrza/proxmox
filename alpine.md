@@ -75,6 +75,7 @@ apk add unbound
 ```
 
 ```
+mkdir -p /var/lib/unbound
 wget https://www.internic.net/domain/named.root -qO- | tee /var/lib/unbound/root.hints
 ```
 
@@ -116,10 +117,9 @@ server:
 ```
 rc-update add unbound boot
 service unbound start
-service unbound restart
-service unbound status
 ```
 
 ```
+apk add bind-tools
 dig pi-hole.net @127.0.0.1 -p 5335
 ```
