@@ -32,15 +32,12 @@ nameserver 192.168.1.1
 
 ```
 ifdown eth0 && ifup eth0
-```
-
-```
 ip a show eth0
 ```
 
 ```
 ping -c 3 1.1.1.1
-ping -c 3 google.com
+ping -c 3 cloudflare.com
 ```
 
 # Firewall
@@ -581,6 +578,38 @@ apk add bash
 ```
 
 ```
+cd /
+```
+
+```
 curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
 filebrowser -a 0.0.0.0 -p 8888 -r /
+```
+
+# Cloudflared
+
+https://gist.github.com/sarkrui/a2998f3a6256a43a5a41dbf5edf5947f
+```
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/bin/cloudflared
+```
+
+```
+chmod +x /usr/bin/cloudflared
+cloudflared -v
+```
+
+```
+/etc/init.d/cloudflared start
+rc-update del cloudflared
+```
+
+```
+rc-update add cloudflared boot
+service cloudflared start
+```
+
+# btop
+
+```
+apk add btop
 ```
