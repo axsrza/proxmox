@@ -275,7 +275,7 @@ nano /home/radio/index.html
   </div>
 
   <audio id="radioStream" preload="none">
-    <source src="https://roarradio.site/radio.mp3" type="audio/mpeg" />
+    <source src="https://icecast.roarradio.site/radio.mp3" type="audio/mpeg" />
   </audio>
 
   <audio id="introStream" preload="auto">
@@ -551,7 +551,7 @@ output.icecast(%mp3,
   mount = "/radio.mp3",
   name = "ROARRadio",
   description = "O rugido do Leao que toca o coracao",
-  url = "https://roarradio.site/radio.mp3",
+  url = "https://roarradio.site",
   public = true,
   radio)
 ```
@@ -588,19 +588,38 @@ filebrowser -a 0.0.0.0 -p 8888 -r /
 
 # Cloudflared
 
-https://gist.github.com/sarkrui/a2998f3a6256a43a5a41dbf5edf5947f
 ```
-wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/bin/cloudflared
-```
-
-```
-chmod +x /usr/bin/cloudflared
-cloudflared -v
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
+chmod +x /usr/local/bin/cloudflared
 ```
 
 ```
-/etc/init.d/cloudflared start
-rc-update del cloudflared
+cloudflared --version
+cloudflared tunnel login
+```
+
+```
+cloudflared tunnel create radio
+nano /root/.cloudflared/config.yml
+```
+
+```
+tunnel: radio
+credentials-file: /root/.cloudflared/<UUID>.json
+
+ingress:
+
+  - hostname: icecast.roarradio.site
+    service: http://127.0.0.1:8000
+
+  - hostname: roarradio.site
+    service: http://127.0.0.1:8001
+
+  - service: http_status:404
+```
+
+```
+cloudflared tunnel run radio
 ```
 
 ```
