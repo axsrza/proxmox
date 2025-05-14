@@ -183,6 +183,7 @@ nameserver 127.0.0.1
 ```
 
 ```
+chattr +i /etc/resolv.conf
 ifdown eth0 && ifup eth0
 ```
 
