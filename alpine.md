@@ -216,7 +216,7 @@ nano /home/radio/index.html
 
   <!-- Manifest for PWA -->
   <link rel="manifest" href="/manifest.json" />
-  
+
   <style>
     body::before {
       content: "";
@@ -293,20 +293,29 @@ nano /home/radio/index.html
 
     let isPlaying = false;
 
-    window.addEventListener('load', () => {
-      Promise.all([
-        introStream.play().catch(e => console.log("Erro ao tocar intro:", e)),
-        radioStream.play().catch(e => console.log("Erro ao tocar rádio:", e))
-      ]).then(() => {
+    // Função para iniciar a reprodução dos streams
+    const startAudio = async () => {
+      try {
+        await introStream.play();
+        await radioStream.play();
         playIcon.className = 'fas fa-pause text-2xl';
         statusText.textContent = "Tocando!";
         isPlaying = true;
-      }).catch(e => {
-        console.log("Autoplay bloqueado:", e);
-      });
+      } catch (error) {
+        console.error("Erro ao tocar áudio:", error);
+        alert("Não foi possível tocar o áudio. Verifique sua conexão.");
+      }
+    };
+
+    // Adiciona o evento de click para qualquer lugar na página
+    document.body.addEventListener('click', () => {
+      if (!isPlaying) {
+        startAudio();
+      }
     });
 
-    playButton.addEventListener('click', async () => {
+    // Adiciona o evento de click no botão de play
+    playButton.addEventListener('click', () => {
       if (isPlaying) {
         introStream.pause();
         radioStream.pause();
@@ -314,19 +323,11 @@ nano /home/radio/index.html
         statusText.textContent = "Pausado";
         isPlaying = false;
       } else {
-        try {
-          await introStream.play();
-          await radioStream.play();
-          playIcon.className = 'fas fa-pause text-2xl';
-          statusText.textContent = "Tocando!";
-          isPlaying = true;
-        } catch (error) {
-          console.error("Erro ao tocar áudio:", error);
-          alert("Não foi possível tocar o áudio. Verifique sua conexão.");
-        }
+        startAudio();
       }
     });
 
+    // Controle de volume
     volumeControl.addEventListener('input', function () {
       introStream.volume = this.value;
       radioStream.volume = this.value;
