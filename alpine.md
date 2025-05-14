@@ -255,7 +255,7 @@ nano /home/radio/index.html
       </div>
     </div>
 
-    <div class="bg-yellow-900 bg-opacity-20 rounded-lg p-4 mb-8">
+    <div class="rounded-lg p-4 mb-8">
       <h3 class="font-semibold text-center text-yellow-300 mb-2">Versículo do dia</h3>
       <p id="bibleVerse" class="text-center italic text-yellow-200">Carregando versículo...</p>
     </div>
