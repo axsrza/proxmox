@@ -275,17 +275,17 @@ nano /home/radio/index.html
     </div>
   </div>
 
-  <audio id="radioStream" preload="none">
-    <source src="https://icecast.roarradio.site/radio.mp3" type="audio/mpeg" />
-  </audio>
-
   <audio id="introStream" preload="auto">
     <source src="/intro.mp3" type="audio/mpeg" />
   </audio>
 
+  <audio id="radioStream" preload="none">
+    <source src="https://icecast.roarradio.site/radio.mp3" type="audio/mpeg" />
+  </audio>
+
   <script>
-    const radioStream = document.getElementById('radioStream');
     const introStream = document.getElementById('introStream');
+    const radioStream = document.getElementById('radioStream');
     const playButton = document.getElementById('playButton');
     const playIcon = document.getElementById('playIcon');
     const volumeControl = document.getElementById('volumeControl');
@@ -295,8 +295,8 @@ nano /home/radio/index.html
 
     window.addEventListener('load', () => {
       Promise.all([
-        radioStream.play().catch(e => console.log("Erro ao tocar rádio:", e)),
-        introStream.play().catch(e => console.log("Erro ao tocar intro:", e))
+        introStream.play().catch(e => console.log("Erro ao tocar intro:", e)),
+        radioStream.play().catch(e => console.log("Erro ao tocar rádio:", e))
       ]).then(() => {
         playIcon.className = 'fas fa-pause text-2xl';
         statusText.textContent = "Tocando!";
@@ -308,15 +308,15 @@ nano /home/radio/index.html
 
     playButton.addEventListener('click', async () => {
       if (isPlaying) {
-        radioStream.pause();
         introStream.pause();
+        radioStream.pause();
         playIcon.className = 'fas fa-play text-2xl';
         statusText.textContent = "Pausado";
         isPlaying = false;
       } else {
         try {
-          await radioStream.play();
           await introStream.play();
+          await radioStream.play();
           playIcon.className = 'fas fa-pause text-2xl';
           statusText.textContent = "Tocando!";
           isPlaying = true;
@@ -328,12 +328,12 @@ nano /home/radio/index.html
     });
 
     volumeControl.addEventListener('input', function () {
-      radioStream.volume = this.value;
       introStream.volume = this.value;
+      radioStream.volume = this.value;
     });
 
-    radioStream.volume = volumeControl.value;
     introStream.volume = volumeControl.value;
+    radioStream.volume = volumeControl.value;
 
     radioStream.addEventListener('canplay', () => {
       statusText.textContent = "Pronto para tocar!";
