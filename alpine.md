@@ -652,3 +652,9 @@ rc-service cloudflared start
 ```
 apk add btop
 ```
+
+# Finalizar!
+
+```
+apk update && apk upgrade
+```
