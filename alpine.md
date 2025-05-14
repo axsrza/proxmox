@@ -234,8 +234,7 @@ nano /home/radio/index.html
 </head>
 <body class="font-sans text-yellow-100 bg-[#111827] flex flex-col items-center justify-center p-4 min-h-screen">
 
-  <!-- Remover o fundo, opacidade e sombra aqui -->
-  <div class="rounded-xl p-8 player-container w-full max-w-md"> <!-- Apenas removi as classes de fundo e sombra -->
+  <div class="rounded-xl p-8 player-container w-full max-w-md">
     <div class="text-center mb-8">
       <h1 class="text-4xl font-bold text-yellow-400 mb-2">ROARRadio</h1>
       <p class="text-yellow-200">O rugido do Leão que toca o coração</p>
@@ -292,25 +291,35 @@ nano /home/radio/index.html
     const statusText = document.getElementById('statusText');
 
     let isPlaying = false;
+    let hasInteracted = false;
 
     // Função para iniciar a reprodução dos streams
-    const startAudio = async () => {
+    const resetAndPlay = async () => {
       try {
-        await introStream.play();
-        await radioStream.play();
+        introStream.currentTime = 0;
+        radioStream.pause();
+        introStream.play();
+
+        statusText.textContent = "Tocando introdução...";
         playIcon.className = 'fas fa-pause text-2xl';
-        statusText.textContent = "Tocando!";
         isPlaying = true;
+
+        introStream.onended = async () => {
+          radioStream.currentTime = 0;
+          await radioStream.play();
+          statusText.textContent = "Transmitindo ao vivo!";
+        };
       } catch (error) {
         console.error("Erro ao tocar áudio:", error);
         alert("Não foi possível tocar o áudio. Verifique sua conexão.");
       }
     };
 
-    // Adiciona o evento de click para qualquer lugar na página
+    // Primeira interação do usuário com a página (qualquer clique)
     document.body.addEventListener('click', () => {
-      if (!isPlaying) {
-        startAudio();
+      if (!hasInteracted) {
+        hasInteracted = true;
+        resetAndPlay();
       }
     });
 
@@ -323,7 +332,7 @@ nano /home/radio/index.html
         statusText.textContent = "Pausado";
         isPlaying = false;
       } else {
-        startAudio();
+        resetAndPlay(); // Reinicia tudo com a intro novamente
       }
     });
 
@@ -337,7 +346,7 @@ nano /home/radio/index.html
     radioStream.volume = volumeControl.value;
 
     radioStream.addEventListener('canplay', () => {
-      statusText.textContent = "Pronto para tocar!";
+      if (!isPlaying) statusText.textContent = "Pronto para tocar!";
     });
 
     radioStream.addEventListener('error', () => {
@@ -348,16 +357,8 @@ nano /home/radio/index.html
 
     async function getDailyVerseFromAPI() {
       const verses = [
-        "Salmos 100:4",
-        "Salmos 150:6",
-        "Salmos 95:1",
-        "Salmos 103:1",
-        "Salmos 147:1",
-        "Hebreus 13:15",
-        "Efésios 5:19",
-        "Isaías 25:1",
-        "Apocalipse 5:13",
-        "Salmos 34:1"
+        "Salmos 100:4", "Salmos 150:6", "Salmos 95:1", "Salmos 103:1", "Salmos 147:1",
+        "Hebreus 13:15", "Efésios 5:19", "Isaías 25:1", "Apocalipse 5:13", "Salmos 34:1"
       ];
 
       const randomVerse = verses[Math.floor(Math.random() * verses.length)];
