@@ -669,3 +669,17 @@ apk add btop
 ```
 apk update && apk upgrade
 ```
+
+# Criar Stack do MeTube no Portainer
+
+```
+services:
+  metube:
+    image: ghcr.io/alexta69/metube
+    container_name: metube
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    volumes:
+      - /home/music:/downloads
+```
