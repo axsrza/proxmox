@@ -634,7 +634,7 @@ command_background=true
 
 ```
 chmod +x /etc/init.d/cloudflared
-rc-update add cloudflared boot
+rc-update add cloudflared default
 ```
 
 ```
