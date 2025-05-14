@@ -586,7 +586,7 @@ filebrowser -a 0.0.0.0 -p 8888 -r /
 # Cloudflared
 
 ```
-wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/bin/cloudflared
 chmod +x /usr/local/bin/cloudflared
 ```
 
