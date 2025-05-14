@@ -551,7 +551,7 @@ output.icecast(%mp3,
   mount = "/radio.mp3",
   name = "ROARRadio",
   description = "O rugido do Leao que toca o coracao",
-  url = "https://roarradio.site",
+  url = "https://icecast.roarradio.site",
   public = true,
   radio)
 ```
