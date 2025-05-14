@@ -623,8 +623,27 @@ cloudflared tunnel run radio
 ```
 
 ```
+nano /etc/init.d/cloudflared
+```
+
+```
+#!/sbin/openrc-run
+
+name="cloudflared"
+description="Cloudflare Tunnel"
+command="/usr/bin/cloudflared"
+command_args="tunnel run radio"
+pidfile="/var/run/cloudflared.pid"
+command_background=true
+```
+
+```
+chmod +x /etc/init.d/cloudflared
 rc-update add cloudflared boot
-service cloudflared start
+```
+
+```
+rc-service cloudflared start
 ```
 
 # btop
