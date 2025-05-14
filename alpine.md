@@ -528,12 +528,6 @@ services:
     command: [liquidsoap, /etc/liquidsoap/radio.liq]
     extra_hosts:
       - host.docker.internal:host-gateway
-    healthcheck:
-      test: [CMD, curl, -f, https://host.docker.internal:8000/radio.mp3]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
 ```
 
 ```
