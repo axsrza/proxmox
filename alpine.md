@@ -637,6 +637,14 @@ error_log="/var/log/cloudflared.err"
 depend() {
     need docker
 }
+
+start_pre() {
+    ebegin "Aguardando container pihole iniciar"
+    until docker ps | grep -q pihole; do
+        sleep 2
+    done
+    eend 0
+}
 ```
 
 ```
