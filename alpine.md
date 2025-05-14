@@ -627,9 +627,16 @@ nano /etc/init.d/cloudflared
 name="cloudflared"
 description="Cloudflare Tunnel"
 command="/usr/bin/cloudflared"
-command_args="tunnel run radio"
+command_args="tunnel --config /root/.cloudflared/config.yml run radio"
 pidfile="/var/run/cloudflared.pid"
-command_background=true
+command_background="yes"
+
+output_log="/var/log/cloudflared.log"
+error_log="/var/log/cloudflared.err"
+
+depend() {
+    need docker
+}
 ```
 
 ```
