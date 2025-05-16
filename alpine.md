@@ -123,7 +123,7 @@ docker exec -it pihole pihole setpassword
 
 ## Apos acessar o pihole com a nova senha, desabilite o dns cadastrado e use este: `127.0.0.1#5335`
 
-# Internet + DNS
+# Internet + DNS + Hostname
 
 ```
 rm -rf /etc/network/interfaces
@@ -145,6 +145,16 @@ nano /etc/resolv.conf
 
 ```
 nameserver 127.0.0.1
+```
+
+```
+rm -rf /etc/hosts
+nano /etc/hosts
+```
+
+```
+127.0.0.1       homelab homelab localhost.localdomain localhost
+::1             localhost localhost.localdomain
 ```
 
 ```
