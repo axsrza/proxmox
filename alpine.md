@@ -167,6 +167,12 @@ ifdown eth0 && ifup eth0 && reboot
 apk add btop
 ```
 
+# fastfetch
+
+```
+apk add fastfetch
+```
+
 # Finalizar!
 
 ```
