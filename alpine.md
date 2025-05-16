@@ -5,35 +5,6 @@
 apk add nano
 ```
 
-# Internet + DNS
-
-```
-rm -rf /etc/network/interfaces
-nano /etc/network/interfaces
-```
-
-```
-auto eth0
-iface eth0 inet static
-    address 192.168.1.99
-    netmask 255.255.255.0
-    gateway 192.168.1.1
-```
-
-```
-rm -rf /etc/resolv.conf
-nano /etc/resolv.conf
-```
-
-```
-nameserver 192.168.1.1
-#nameserver 127.0.0.1
-```
-
-```
-ifdown eth0 && ifup eth0
-```
-
 # Unbound
 
 ```
@@ -152,7 +123,20 @@ docker exec -it pihole pihole setpassword
 
 ## Apos acessar o pihole com a nova senha, desabilite o dns cadastrado e use este: `127.0.0.1#5335`
 
-# Local DNS
+# Internet + DNS
+
+```
+rm -rf /etc/network/interfaces
+nano /etc/network/interfaces
+```
+
+```
+auto eth0
+iface eth0 inet static
+    address 192.168.1.99
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+```
 
 ```
 rm -rf /etc/resolv.conf
@@ -160,29 +144,11 @@ nano /etc/resolv.conf
 ```
 
 ```
-#nameserver 192.168.1.1
 nameserver 127.0.0.1
 ```
 
 ```
-chattr +i /etc/resolv.conf
-ifdown eth0 && ifup eth0
-```
-
-# File Browser
-
-```
-apk add curl
-apk add bash
-```
-
-```
-cd /
-```
-
-```
-curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
-filebrowser -a 0.0.0.0 -p 8888 -r /
+ifdown eth0 && ifup eth0 && reboot
 ```
 
 # btop
