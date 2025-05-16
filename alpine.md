@@ -34,32 +34,6 @@ nameserver 192.168.1.1
 ifdown eth0 && ifup eth0
 ```
 
-# Docker
-
-```
-rm -rf /etc/apk/repositories
-nano /etc/apk/repositories
-```
-
-```
-http://dl-cdn.alpinelinux.org/alpine/v3.21/main
-http://dl-cdn.alpinelinux.org/alpine/v3.21/community
-```
-
-```
-apk update
-apk add docker
-```
-
-```
-rc-update add docker boot
-service docker start
-```
-
-```
-docker run hello-world
-```
-
 # Unbound
 
 ```
@@ -114,6 +88,32 @@ service unbound start
 ```
 apk add bind-tools
 dig pi-hole.net @127.0.0.1 -p 5335
+```
+
+# Docker
+
+```
+rm -rf /etc/apk/repositories
+nano /etc/apk/repositories
+```
+
+```
+http://dl-cdn.alpinelinux.org/alpine/v3.21/main
+http://dl-cdn.alpinelinux.org/alpine/v3.21/community
+```
+
+```
+apk update
+apk add docker
+```
+
+```
+rc-update add docker boot
+service docker start
+```
+
+```
+docker run hello-world
 ```
 
 # Portainer
