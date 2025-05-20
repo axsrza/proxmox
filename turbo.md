@@ -6,7 +6,13 @@ apk add linux-headers
 
 ```
 git clone https://github.com/thierry-goubier/undervolt.git
+```
+
+```
 cd undervolt
+```
+
+```
 make
 ```
 
