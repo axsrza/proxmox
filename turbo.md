@@ -5,7 +5,7 @@ apk add linux-headers
 ```
 
 ```
-wget https://sourceforge.net/projects/undervolt/files/undervolt/0.4/undervolt-0.4.tgz/download -O undervolt-0.4.tgz
+wget https://phoenixnap.dl.sourceforge.net/project/undervolt/undervolt-0.4.tgz?viasf=1 -O undervolt-0.4.tgz
 ```
 
 ```
