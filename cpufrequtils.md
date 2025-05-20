@@ -29,4 +29,9 @@ rc-update add local default
 
 ```
 rc-update show | grep local
+reboot
+```
+
+```
+cpufreq-info
 ```
