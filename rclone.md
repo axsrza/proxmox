@@ -68,6 +68,16 @@ rclone copy /home/music gdrive:/home/music --progress
 
 > Substitua `gdrive:` pelo nome do seu remote configurado.
 
+## 📂 Sincronizar arquivos com Gdrive
+
+Exemplo de cópia de pasta Google Drive para o local:
+
+```sh
+rclone copy gdrive:/home/music /home/music --progress
+```
+
+> Substitua `gdrive:` pelo nome do seu remote configurado.
+
 ---
 
 ## ✅ Finalizando
