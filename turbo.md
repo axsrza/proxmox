@@ -1,15 +1,16 @@
 
 ```
-apk add build-base git
+apk add build-base
 apk add linux-headers
 ```
 
 ```
-git clone https://github.com/thierry-goubier/undervolt.git
+wget https://sourceforge.net/projects/undervolt/files/undervolt/0.4/undervolt-0.4.tgz/download -O undervolt-0.4.tgz
 ```
 
 ```
-cd undervolt
+tar xzf undervolt-0.4.tgz
+cd undervolt-0.4
 ```
 
 ```
@@ -22,8 +23,12 @@ chmod +x /usr/bin/undervolt
 ```
 
 ```
-git clone https://github.com/melma/c60-tweak.git
-cd c60-tweak
+wget https://github.com/melma/c60-tweak/archive/refs/heads/master.zip -O c60-tweak.zip
+unzip c60-tweak.zip
+```
+
+```
+cd c60-tweak-master
 chmod +x c60-tweak.sh
 ```
 
