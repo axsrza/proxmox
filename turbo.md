@@ -1,55 +1,112 @@
+# AMD C-60 Undervolt + Turbo Boost no Alpine Linux
 
-```
-apk add build-base linux-headers util-linux
+Este guia explica como compilar e instalar o programa `undervolt` no Alpine Linux para aplicar undervolt e desbloquear o Turbo Boost do processador AMD C-60.
+
+---
+
+## \:warning: Requisitos
+
+Instale os pacotes necessários:
+
+```sh
+apk add build-base linux-headers util-linux git
 ```
 
-```
-wget https://phoenixnap.dl.sourceforge.net/project/undervolt/undervolt-0.4.tgz?viasf=1 -O undervolt-0.4.tgz
+---
+
+## \:floppy\_disk: Clonar este repositório
+
+Clone o repositório com o código fonte:
+
+```sh
+git clone https://github.com/axsrza/undervolt.git
+cd undervolt
 ```
 
-```
-tar xzf undervolt-0.4.tgz
-cd undervolt-0.4
-```
+---
 
-```
+## \:hammer: Compilar o programa
+
+Compile com:
+
+```sh
 make
 ```
 
-```
+E instale com:
+
+```sh
 cp undervolt /usr/bin/
 chmod +x /usr/bin/undervolt
 ```
 
-```
-wget https://github.com/melma/c60-tweak/archive/refs/heads/master.zip -O c60-tweak.zip
-unzip c60-tweak.zip
+---
+
+## \:zap: Aplicar o undervolt e ativar turbo
+
+Carregue o módulo MSR e aplique os parâmetros:
+
+```sh
+modprobe msr
+undervolt -p 0:0x28 -p 1:0x28,3 -p 2:0x38
 ```
 
-```
-cd c60-tweak-master
-chmod +x c60-tweak.sh
+Verifique com:
+
+```sh
+undervolt -r
 ```
 
-```
-sed -i 's/sudo //g' c60-tweak.sh
-./c60-tweak.sh
-```
+Saída esperada:
 
 ```
-nano /etc/local.d/c60-tweak.start
+P-state         Vid             Voltage         div
+  0             0x28            1.0500V         3.00
+  1             0x28            1.0500V         3.00
+  2             0x38            0.8500V         5.00
 ```
 
-Conteúdo:
-```
+---
+
+## \:rocket: Executar automaticamente no boot
+
+Crie um script de inicialização:
+
+```sh
+cat << 'EOF' > /etc/init.d/c60-tweak
 #!/bin/sh
-/usr/bin/undervolt -p0 1050 -p1 1050 -p2 850 && echo "Turbo unlocked"
+### BEGIN INIT INFO
+# Provides:       c60-tweak
+# Default-Start:  3 4 5
+# Default-Stop:
+### END INIT INFO
+
+modprobe msr
+/usr/bin/undervolt -p 0:0x28 -p 1:0x28,3 -p 2:0x38
+EOF
+
+chmod +x /etc/init.d/c60-tweak
+rc-update add c60-tweak default
 ```
 
-```
-chmod +x /etc/local.d/c60-tweak.start
+---
+
+## \:white\_check\_mark: Finalizando
+
+Reinicie o sistema e verifique novamente com:
+
+```sh
+undervolt -r
 ```
 
-```
-rc-update add local default
-```
+Se os P-states estiverem corretos (`0x28`, `3.00`, `0x38`, etc.), o tweak está ativo.
+
+---
+
+## \:link: Repositório
+
+[https://github.com/axsrza/undervolt](https://github.com/axsrza/undervolt)
+
+---
+
+Para dúvidas ou colaborações, abra uma issue no repositório ou envie um PR. \:rocket:
