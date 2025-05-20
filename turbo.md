@@ -1,7 +1,6 @@
 
 ```
-apk add build-base
-apk add linux-headers
+apk add build-base linux-headers util-linux
 ```
 
 ```
@@ -33,6 +32,7 @@ chmod +x c60-tweak.sh
 ```
 
 ```
+sed -i 's/sudo //g' c60-tweak.sh
 ./c60-tweak.sh
 ```
 
