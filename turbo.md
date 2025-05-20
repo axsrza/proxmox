@@ -70,23 +70,31 @@ P-state         Vid             Voltage         div
 
 ## \:rocket: Executar automaticamente no boot
 
-Crie um script de inicialização:
+**Recomendação para Alpine Linux**: use `/etc/local.d/` pois é mais confiável e roda após todos os sistemas estarem prontos.
+
+Crie o script:
 
 ```sh
-cat << 'EOF' > /etc/init.d/c60-tweak
+cat << 'EOF' > /etc/local.d/c60-tweak.start
 #!/bin/sh
-### BEGIN INIT INFO
-# Provides:       c60-tweak
-# Default-Start:  3 4 5
-# Default-Stop:
-### END INIT INFO
 
 modprobe msr
 /usr/bin/undervolt -p 0:0x28 -p 1:0x28,3 -p 2:0x38
 EOF
 
-chmod +x /etc/init.d/c60-tweak
-rc-update add c60-tweak default
+chmod +x /etc/local.d/c60-tweak.start
+```
+
+Garanta que o serviço `local` está ativo:
+
+```sh
+rc-update add local default
+```
+
+Para testar manualmente:
+
+```sh
+/etc/local.d/c60-tweak.start
 ```
 
 ---
