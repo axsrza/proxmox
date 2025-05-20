@@ -36,7 +36,7 @@ Siga o assistente para configurar um remote (por exemplo, Google Drive).
 
 Recomenda-se uma das duas opções abaixo para executar o Firefox em container.
 
-### Opção 1: jlesage/firefox
+### Opção 1: jlesage/firefox :5800
 
 ```sh
 docker run -d \
