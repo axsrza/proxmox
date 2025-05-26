@@ -24,29 +24,29 @@
 
 ## 📍 Módulo 2: Instalando e Explorando o Postman
 
-**Duração:** 45min  
 **Objetivo:** Aprender a instalar e usar o Postman para testar APIs.
 
 ### Conteúdo:
 - Download e instalação do Postman
 - Navegando pela interface
-- Criando a primeira requisição `GET` com uma API pública (ex: JSONPlaceholder)
+
+### 🛠 Atividade:
+- Criando a primeira requisição `POST` com uma API
 
 ---
 
 ## 📍 Módulo 3: Usando a API do Artia
 
-**Duração:** 1h30  
 **Objetivo:** Testar na prática a API do Artia com autenticação e chamadas reais.
 
 ### Conteúdo:
 - Introdução à API do Artia
 - Autenticação (requisição de token)
-- Testes com métodos:
-  - `GET /projetos`
-  - `GET /tarefas`
-  - `POST /tarefas`
-  - `PUT /tarefas/:id`
+- Testes:
+  - `projetos`
+  - `atividades`
+  - `apontamentos`
+  - `completar`
 - Códigos de status (200, 201, 401, 404, etc.)
 
 ### 🛠 Atividade:
@@ -54,7 +54,7 @@
 
 ---
 
-## 📍 Módulo 4: Boas Práticas e Documentação
+## 📍 Módulo 4: Boas Práticas e Documentação (REVISAR A PARTIR DAQUI)
 
 **Duração:** 1h  
 **Objetivo:** Ensinar como documentar testes e organizar requisições.
