@@ -13,7 +13,7 @@
 
 ### Conteúdo:
 - O que é uma API?  
-- Métodos HTTP: `POST` (`GET`, `PUT`, `DELETE`, `falar que existe, mas o nosso é apenas POST`)
+- Métodos HTTP: `POST` (`GET`, `PUT`, `DELETE`, falar que existe, mas o nosso é apenas POST)
 - JSON
 - Estrutura de uma requisição e resposta
 
