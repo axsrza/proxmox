@@ -3,24 +3,22 @@
 ## 📅 Cronograma do Treinamento
 
 ### ⏰ Duração Total
-**4 a 5 horas** (pode ser dividido em sessões menores ao longo da semana)
+**1 dia* (avaliar com Djone)
 
 ---
 
 ## 📍 Módulo 1: Introdução às APIs
 
-**Duração:** 1h  
 **Objetivo:** Entender o que é uma API e como ela conecta sistemas.
 
 ### Conteúdo:
 - O que é uma API?  
-- REST vs SOAP (foco em REST)
-- Métodos HTTP: `GET`, `POST`, `PUT`, `DELETE`
+- Métodos HTTP: `POST` (`GET`, `PUT`, `DELETE`, `falar que existe, mas o nosso é apenas POST`)
+- JSON
 - Estrutura de uma requisição e resposta
-- Exemplo de resposta JSON
 
-### 🛠 Atividade:
-- Análise de uma resposta JSON simples
+### 🛠 Exemplo:
+- `Criar`
 
 ---
 
