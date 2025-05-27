@@ -1,4 +1,4 @@
-# 🧠 Treinamento Básico de API com Postman e API do Artia
+# 🧠 Treinamento Básico de API do Artia e Postman
 
 ## 📅 Cronograma do Treinamento
 
@@ -13,7 +13,7 @@
 
 ### Conteúdo:
 - O que é uma API?  
-- Métodos HTTP: `POST` (`GET`, `PUT`, `DELETE`, falar que existe, mas o nosso é apenas POST)
+- Métodos HTTP: `POST` (`GET`, `PUT`, `DELETE` falar que existe, mas no Artia usaremos apenas o POST)
 - JSON
 - Estrutura de uma requisição e resposta
 
@@ -50,19 +50,17 @@
 - Códigos de status (200, 201, 401, 404, etc.)
 
 ### 🛠 Atividade:
-- Criar uma coleção no Postman e testar chamadas reais na API do Artia
+- Testar chamadas reais na API do Artia
 
 ---
 
-## 📍 Módulo 4: Boas Práticas e Documentação (REVISAR A PARTIR DAQUI)
+## 📍 Módulo 4: Boas Práticas e Documentação
 
-**Duração:** 1h  
 **Objetivo:** Ensinar como documentar testes e organizar requisições.
 
 ### Conteúdo:
 - Importância da documentação
-- Gerando documentação automática no Postman
-- Uso de variáveis de ambiente no Postman
+- Gerando documentação
 - Organização de coleções e testes
 
 ### 🛠 Atividade:
@@ -72,16 +70,15 @@
 
 ## 📍 Módulo 5: Gravação de Vídeos para Onboarding
 
-**Duração:** 45min  
 **Objetivo:** Criar conteúdo de apoio para futuras equipes.
 
 ### Conteúdo:
-- Ferramentas: OBS Studio, Loom, Clipchamp
+- Ferramentas: OBS Studio
 - Estrutura de um vídeo tutorial:
   1. Introdução
   2. Demonstração da API
   3. Encerramento
-- Sugestão de armazenamento: Google Drive, SharePoint, Notion
+- Documentação Interna
 
 ### 🛠 Atividade:
 - Gravar uma simulação de requisição com explicação
@@ -90,7 +87,6 @@
 
 ## 📚 Materiais de Apoio
 
-- 📂 Slides introdutórios (API + Postman)
 - 📄 Link oficial da documentação da API do Artia
 - 🧪 Coleção Postman com exemplos
 - ✅ Checklist de onboarding técnico
