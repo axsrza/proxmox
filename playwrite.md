@@ -191,3 +191,7 @@ const { chromium } = require('playwright');
 ```
 
 ---
+
+```bash
+npm install @faker-js/faker
+```
