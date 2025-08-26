@@ -1,5 +1,5 @@
 
-```
+```bash
 nano cadastro-artia.js
 ```
 
@@ -156,6 +156,38 @@ const { chromium } = require('playwright');
 
 ```bash
 nano .vscode/launch.json
+```
+
+---
+
+```
+const { chromium } = require('playwright');
+
+(async () => {
+  console.log('Iniciando o script de cadastro...');
+
+  const browser = await chromium.launch({ headless: false, slowMo: 100 });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  console.log('Abrindo página de registro...');
+  await page.goto('https://app2.artia.com/users/registration');
+
+  console.log('Preenchendo formulário...');
+  await page.fill('input[name="userName"]', 'João Teste');
+  await page.fill('input[name="userPhone"]', '11999998888');
+  await page.fill('input[name="userEmail"]', 'joao.teste@example.com');
+  await page.fill('input[name="userPassword"]', 'SenhaSegura123');
+
+  console.log('Clicando no botão "Criar conta"...');
+  await page.click('button[data-test-id="create-account"]');
+
+  // Esperar só para ver a próxima etapa carregando (sem avançar ainda)
+  await page.waitForTimeout(3000);
+
+  console.log('Script finalizado.');
+  await browser.close();
+})();
 ```
 
 ---
