@@ -5,8 +5,16 @@ const { chromium } = require('playwright');
 (async () => {
   console.log('Iniciando o script de cadastro...');
 
-  const browser = await chromium.launch({ headless: false, slowMo: 100 });
-  const context = await browser.newContext();
+  const browser = await chromium.launch({
+    headless: false,
+    slowMo: 200,
+    args: ['--start-maximized'], // abre maximizado
+  });
+
+  const context = await browser.newContext({
+    viewport: null, // permite usar o tamanho real da janela
+  });
+
   const page = await context.newPage();
 
   // ===== Etapa 1 =====
@@ -16,7 +24,7 @@ const { chromium } = require('playwright');
   console.log('Preenchendo formulário da primeira etapa...');
   await page.fill('input[name="userName"]', 'João Teste');
   await page.fill('input[name="userPhone"]', '11999998888');
-  await page.fill('input[name="userEmail"]', 'joao.te666ste@example.com.br');
+  await page.fill('input[name="userEmail"]', 'joao.testador1@example.com.br');
   await page.fill('input[name="userPassword"]', 'SenhaSegura123');
 
   console.log('Clicando no botão "Criar conta"...');
@@ -27,48 +35,65 @@ const { chromium } = require('playwright');
 
   // ===== Etapa 2 =====
   console.log('Preenchendo formulário da segunda etapa...');
-
-  // Campo de texto livre
   await page.fill('input[name="companyName"]', 'My Company');
 
-  // Função genérica para preencher campos de pesquisa com autocomplete
-  const preencherSearchInput = async (containerDataTestId, texto) => {
-    const container = page.locator(`[data-test-id="${containerDataTestId}"]`);
+  // Função para preencher campos de autocomplete
+  const preencherSearchInput = async (containerDataTestId, texto, opcaoExata) => {
+    console.log(`Selecionando ${opcaoExata} em ${containerDataTestId}...`);
 
-    // Abrir dropdown
-    await container.locator('svg[data-test-id="toggle-select-open-status"]').click();
+    // Abre o dropdown
+    await page.locator(
+      `[data-test-id="${containerDataTestId}"] svg[data-test-id="toggle-select-open-status"]`
+    ).click();
 
-    // Selecionar o input interno
-    const inputPesquisa = container.locator('input[data-test-id="search-input"]');
+    // Seleciona apenas o input visível no momento
+    const inputPesquisa = page.locator('input[data-test-id="search-input"]:visible');
     await inputPesquisa.waitFor({ state: 'visible' });
 
-    // Digitar o texto que você quer buscar
-    await inputPesquisa.fill(texto);
+    // Digita o texto
+    await inputPesquisa.fill('');
+    await inputPesquisa.type(texto, { delay: 150 });
 
-    // Esperar a opção aparecer
-    await page.waitForSelector(`p.chakra-text:has-text("${texto}")`, { timeout: 5000 });
+    // Aguarda o dropdown carregar
+    await page.waitForTimeout(1000);
 
-    // Clicar na opção correta
-    await page.click(`p.chakra-text:has-text("${texto}")`);
+    // Localiza a opção exata pelo texto
+    const opcao = page.getByText(opcaoExata, { exact: true });
 
-    console.log(`Campo ${containerDataTestId} preenchido com "${texto}"`);
+    // DEBUG: mostrar se encontrou opções
+    const count = await opcao.count();
+    console.log(`Foram encontradas ${count} opções para "${opcaoExata}"`);
+
+    // Se encontrou, clica
+    if (count > 0) {
+      await opcao.first().click();
+    } else {
+      throw new Error(`Não foi possível encontrar a opção "${opcaoExata}" em ${containerDataTestId}`);
+    }
   };
 
-  // Preencher todos os campos de seleção
-  await preencherSearchInput('businessLine', 'Education and Teaching'); // Ramo de atuação
-  await preencherSearchInput('employeesNumber', '0 - 1');                // Número de colaboradores
-  await preencherSearchInput('department', 'Sales');                     // Departamento
-  await preencherSearchInput('userJobTitle', 'Manager');                 // Seu cargo
+  // Preenchendo campos com autocomplete
+  await preencherSearchInput('businessLine', 'Education', 'Education and Teaching');
+  await preencherSearchInput('employeesNumber', '0', '0 - 1');
+  await preencherSearchInput('department', 'Others', 'Others');
+  await preencherSearchInput('userJobTitle', 'Others', 'Others');
+  await preencherSearchInput('mainGoal', 'Others', 'Others');
 
-  console.log('Todos os campos da segunda etapa preenchidos.');
+  // ===== Preencher campo de texto condicional =====
+  console.log('Aguardando campo textMainGoal aparecer...');
+  const textMainGoalInput = page.locator('input[name="textMainGoal"]');
+  await textMainGoalInput.waitFor({ state: 'visible', timeout: 5000 }); // espera até 5s
+  console.log('Preenchendo campo de texto textMainGoal...');
+  await textMainGoalInput.fill('Meu objetivo principal é aprender automação.');
 
-  // Botão finalizar
-  await page.click('button:has-text("Finish")');
+  // ===== Finalizar cadastro =====
+  console.log('Clicando no botão "Finalizar cadastro"...');
+  await Promise.all([
+    page.click('button[data-test-id="finish-registration"]'),
+    page.waitForLoadState('networkidle'),
+  ]);
 
-  // Espera um pouco para ver o resultado
-  await page.waitForTimeout(3000);
-
-  console.log('Cadastro finalizado!');
+  console.log('Cadastro finalizado com sucesso!');
   await browser.close();
 })();
 ```
