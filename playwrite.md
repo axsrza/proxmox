@@ -91,56 +91,107 @@ const { chromium } = require('playwright');
 
 ```
 const { chromium } = require('playwright');
+const { faker } = require('@faker-js/faker');
+const fs = require('fs'); // Para salvar no CSV
 
-// 👉 Descomente quando quiser usar o faker
-// const { faker } = require('@faker-js/faker');
+// Função para salvar email e senha no CSV
+const salvarRegistroCSV = (email, senha) => {
+  const arquivo = 'registros.csv';
+  const linha = `${email},${senha}\n`;
+  fs.appendFileSync(arquivo, linha, 'utf8');
+  console.log(`Registro salvo no CSV: ${email}`);
+};
 
 (async () => {
   console.log('Iniciando o script de cadastro...');
 
-  const browser = await chromium.launch({ headless: false, slowMo: 100 });
-  const context = await browser.newContext();
+  const browser = await chromium.launch({
+    headless: false,
+    slowMo: 200,
+    args: ['--start-maximized'],
+  });
+
+  const context = await browser.newContext({
+    viewport: null,
+  });
+
   const page = await context.newPage();
 
+  // ===== Etapa 1 =====
   console.log('Abrindo página de registro...');
   await page.goto('https://app2.artia.com/users/registration');
 
-  // ========= DADOS FIXOS =========
-  const nome = 'João Teste';
-  const telefone = '11999998888';
-  const email = 'joao.teste@example.com';
-  const senha = 'SenhaSegura123';
+  // Gerando dados aleatórios
+  const nome = faker.person.fullName(); // Nome completo
+  const telefone = faker.phone.number('11########'); // Telefone com DDD 11
+  const email = faker.internet.email({ firstName: nome.split(' ')[0], lastName: nome.split(' ')[1] });
+  const senha = 'SenhaSegura123'; // Senha fixa ou pode gerar aleatória
 
-  // ========= MODO FAKER (descomente abaixo) =========
-  /*
-  const nome = faker.person.fullName();
-  const telefone = faker.phone.number('119#######'); // gera um número SP fictício
-  const email = faker.internet.email({ firstName: nome.split(' ')[0] }).toLowerCase();
-  const senha = faker.internet.password({ length: 10 });
-
-  console.log(`Usando dados faker:
-    Nome: ${nome}
-    Telefone: ${telefone}
-    Email: ${email}
-    Senha: ${senha}
-  `);
-  */
-
-  console.log('Preenchendo formulário...');
+  console.log('Preenchendo formulário da primeira etapa...');
   await page.fill('input[name="userName"]', nome);
   await page.fill('input[name="userPhone"]', telefone);
   await page.fill('input[name="userEmail"]', email);
   await page.fill('input[name="userPassword"]', senha);
 
   console.log('Clicando no botão "Criar conta"...');
-  await page.click('button[data-test-id="create-account"]');
+  await Promise.all([
+    page.click('button[data-test-id="create-account"]'),
+    page.waitForLoadState('networkidle'),
+  ]);
 
-  // Esperar só para ver a próxima etapa carregando (sem avançar ainda)
-  await page.waitForTimeout(3000);
+  // ===== Etapa 2 =====
+  console.log('Preenchendo formulário da segunda etapa...');
+  const empresa = faker.company.name(); // Nome de empresa aleatório
+  await page.fill('input[name="companyName"]', empresa);
 
-  console.log('Script finalizado.');
+  // Função para preencher campos de autocomplete / dropdown customizado
+  const preencherSearchInput = async (containerDataTestId, texto, opcaoExata) => {
+    console.log(`Selecionando ${opcaoExata} em ${containerDataTestId}...`);
+    const toggle = page.locator(
+      `[data-test-id="${containerDataTestId}"] svg[data-test-id="toggle-select-open-status"]`
+    );
+    await toggle.click();
+
+    const inputPesquisa = page.locator('input[data-test-id="search-input"]:visible');
+    if (await inputPesquisa.count() > 0) {
+      await inputPesquisa.fill('');
+      await inputPesquisa.type(texto, { delay: 150 });
+    }
+
+    await page.waitForTimeout(1000);
+
+    const opcao = page.locator(`p.chakra-text:has-text("${opcaoExata}"):visible`);
+    const count = await opcao.count();
+    console.log(`Foram encontradas ${count} opções visíveis para "${opcaoExata}"`);
+    if (count > 0) {
+      await opcao.first().click();
+    } else {
+      throw new Error(`Não foi possível encontrar a opção "${opcaoExata}" em ${containerDataTestId}`);
+    }
+  };
+
+  // ===== Preenchendo campos =====
+  await preencherSearchInput('businessLine', 'Education', 'Education and Teaching');
+  await preencherSearchInput('employeesNumber', '0', '0 - 1');
+  await preencherSearchInput('department', 'Others', 'Others');
+  await preencherSearchInput('userJobTitle', 'Student', 'Student');
+  await preencherSearchInput('mainGoal', 'Client', 'Client Projects');
+
+  // ===== Finalizar cadastro =====
+  console.log('Clicando no botão "Finalize"...');
+  await Promise.all([
+    page.getByRole('button', { name: 'Finalize' }).click(),
+    page.waitForLoadState('networkidle'),
+  ]);
+
+  console.log('Cadastro finalizado com sucesso!');
+
+  // Salva email e senha no CSV
+  salvarRegistroCSV(email, senha);
+
   await browser.close();
 })();
+
 ```
 
 ---
@@ -245,37 +296,17 @@ nano .vscode/launch.json
 ---
 
 ```
-const { chromium } = require('playwright');
-
-(async () => {
-  console.log('Iniciando o script de cadastro...');
-
-  const browser = await chromium.launch({ headless: false, slowMo: 100 });
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  console.log('Abrindo página de registro...');
-  await page.goto('https://app2.artia.com/users/registration');
-
-  console.log('Preenchendo formulário...');
-  await page.fill('input[name="userName"]', 'João Teste');
-  await page.fill('input[name="userPhone"]', '11999998888');
-  await page.fill('input[name="userEmail"]', 'joao.teste@example.com');
-  await page.fill('input[name="userPassword"]', 'SenhaSegura123');
-
-  console.log('Clicando no botão "Criar conta"...');
-  await page.click('button[data-test-id="create-account"]');
-
-  // Esperar só para ver a próxima etapa carregando (sem avançar ainda)
-  await page.waitForTimeout(3000);
-
-  console.log('Script finalizado.');
-  await browser.close();
-})();
+nano cadastro-artia.js
 ```
 
 ---
 
 ```bash
 npm install @faker-js/faker
+```
+
+---
+
+```bash
+nano duckduckgo-busca.test.js
 ```
