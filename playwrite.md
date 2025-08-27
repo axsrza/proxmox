@@ -413,3 +413,30 @@ await page.waitForTimeout(faker.number.int({ min: 500, max: 2000 }));
 Pode-se combinar todos esses pontos para tornar cada execução mais humana e menos detectável como bot.
 
 ---
+
+
+
+
+
+
+// Lista de proxies gratuitos
+const proxies = [
+  '103.94.52.70:3128',  
+  '139.99.237.62:80',
+  '65.108.203.37:28080',
+  '152.53.39.66:8041',
+  '123.30.154.171:7777'
+  // ...adicione quantos quiser https://free-proxy-list.net/pt/
+];
+
+// Escolhe um proxy aleatório
+const proxyServer = proxies[Math.floor(Math.random() * proxies.length)];
+console.log(`Usando proxy: ${proxyServer}`);
+
+// Cria contexto do navegador usando o proxy
+const context = await browser.newContext({
+  viewport: null,
+  proxy: { server: `http://${proxyServer}` }
+});
+
+const page = await context.newPage();
