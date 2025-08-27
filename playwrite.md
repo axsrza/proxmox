@@ -310,3 +310,106 @@ npm install @faker-js/faker
 ```bash
 nano duckduckgo-busca.test.js
 ```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+# Playwright: Tornando Cadastro Mais Humano e Aleatório
+
+## 1️⃣ Pontos que podem ser manipulados
+
+| Ponto                           | Pode ser aleatório? | Como fazer                     |
+| ------------------------------- | ------------------- | ------------------------------ |
+| IP                              | ❌ Não pelo script   | VPN / proxy                    |
+| User-Agent                      | ✅                   | Lista de userAgents aleatórios |
+| Cookies / localStorage          | ✅                   | Criar valores aleatórios       |
+| Viewport                        | ✅                   | Largura e altura aleatórias    |
+| Movimentos e tempo de interação | ✅                   | Delays e mouse.move aleatórios |
+
+## 2️⃣ User-Agent aleatório
+
+```js
+const userAgents = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/139.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/605.1.15 Safari/605.1.15',
+  'Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/117.0'
+];
+const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+const context = await browser.newContext({
+  viewport: null,
+  userAgent: userAgent
+});
+```
+
+## 3️⃣ Cookies / localStorage aleatórios
+
+```js
+await context.addCookies([
+  { name: 'session_id', value: faker.string.alphanumeric(16), domain: 'app2.artia.com', path: '/' }
+]);
+```
+
+## 4️⃣ Viewport aleatório
+
+```js
+const width = faker.number.int({ min: 1024, max: 1920 });
+const height = faker.number.int({ min: 768, max: 1080 });
+
+const context = await browser.newContext({
+  viewport: { width, height }
+});
+```
+
+## 5️⃣ Movimentos e tempo de interação aleatório
+
+```js
+// Digitação com delays aleatórios
+await page.type('input[name="userName"]', nome, { delay: faker.number.int({ min: 50, max: 200 }) });
+
+// Movimentos de mouse aleatórios
+const x = faker.number.int({ min: 100, max: 800 });
+const y = faker.number.int({ min: 100, max: 600 });
+await page.mouse.move(x, y);
+await page.mouse.click(x, y);
+
+// Pausas aleatórias entre ações
+await page.waitForTimeout(faker.number.int({ min: 500, max: 2000 }));
+```
+
+## 🔹 Resumo
+
+* IP → não controlável pelo script, requer VPN/proxy.
+* User-Agent → aleatório a cada execução.
+* Cookies → aleatórios, criados por script.
+* Viewport → aleatório.
+* Interação → delays, cliques e movimentos do mouse aleatórios.
+
+Pode-se combinar todos esses pontos para tornar cada execução mais humana e menos detectável como bot.
+
+---
