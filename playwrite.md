@@ -22,9 +22,9 @@ const { chromium } = require('playwright');
   await page.goto('https://app2.artia.com/users/registration');
 
   console.log('Preenchendo formulário da primeira etapa...');
-  await page.fill('input[name="userName"]', 'João Teste');
-  await page.fill('input[name="userPhone"]', '11999998888');
-  await page.fill('input[name="userEmail"]', 'joao.testador1@example.com.br');
+  await page.fill('input[name="userName"]', 'João Silva');
+  await page.fill('input[name="userPhone"]', '11999998876');
+  await page.fill('input[name="userEmail"]', 'joao.testador123@silva.com.br');
   await page.fill('input[name="userPassword"]', 'SenhaSegura123');
 
   console.log('Clicando no botão "Criar conta"...');
@@ -35,36 +35,32 @@ const { chromium } = require('playwright');
 
   // ===== Etapa 2 =====
   console.log('Preenchendo formulário da segunda etapa...');
-  await page.fill('input[name="companyName"]', 'My Company');
+  await page.fill('input[name="companyName"]', 'Empresa');
 
-  // Função para preencher campos de autocomplete
+  // Função para preencher campos de autocomplete / dropdown customizado
   const preencherSearchInput = async (containerDataTestId, texto, opcaoExata) => {
     console.log(`Selecionando ${opcaoExata} em ${containerDataTestId}...`);
 
     // Abre o dropdown
-    await page.locator(
+    const toggle = page.locator(
       `[data-test-id="${containerDataTestId}"] svg[data-test-id="toggle-select-open-status"]`
-    ).click();
+    );
+    await toggle.click();
 
-    // Seleciona apenas o input visível no momento
+    // Seleciona apenas o input visível no momento (se houver)
     const inputPesquisa = page.locator('input[data-test-id="search-input"]:visible');
-    await inputPesquisa.waitFor({ state: 'visible' });
+    if (await inputPesquisa.count() > 0) {
+      await inputPesquisa.fill('');
+      await inputPesquisa.type(texto, { delay: 150 });
+    }
 
-    // Digita o texto
-    await inputPesquisa.fill('');
-    await inputPesquisa.type(texto, { delay: 150 });
-
-    // Aguarda o dropdown carregar
+    // Aguarda a lista renderizar
     await page.waitForTimeout(1000);
 
-    // Localiza a opção exata pelo texto
-    const opcao = page.getByText(opcaoExata, { exact: true });
-
-    // DEBUG: mostrar se encontrou opções
+    // Clica na primeira opção visível correta
+    const opcao = page.locator(`p.chakra-text:has-text("${opcaoExata}"):visible`);
     const count = await opcao.count();
-    console.log(`Foram encontradas ${count} opções para "${opcaoExata}"`);
-
-    // Se encontrou, clica
+    console.log(`Foram encontradas ${count} opções visíveis para "${opcaoExata}"`);
     if (count > 0) {
       await opcao.first().click();
     } else {
@@ -72,24 +68,17 @@ const { chromium } = require('playwright');
     }
   };
 
-  // Preenchendo campos com autocomplete
+  // ===== Preenchendo campos =====
   await preencherSearchInput('businessLine', 'Education', 'Education and Teaching');
   await preencherSearchInput('employeesNumber', '0', '0 - 1');
   await preencherSearchInput('department', 'Others', 'Others');
-  await preencherSearchInput('userJobTitle', 'Others', 'Others');
-  await preencherSearchInput('mainGoal', 'Others', 'Others');
-
-  // ===== Preencher campo de texto condicional =====
-  console.log('Aguardando campo textMainGoal aparecer...');
-  const textMainGoalInput = page.locator('input[name="textMainGoal"]');
-  await textMainGoalInput.waitFor({ state: 'visible', timeout: 5000 }); // espera até 5s
-  console.log('Preenchendo campo de texto textMainGoal...');
-  await textMainGoalInput.fill('Meu objetivo principal é aprender automação.');
+  await preencherSearchInput('userJobTitle', 'Student', 'Student');
+  await preencherSearchInput('mainGoal', 'Client', 'Client Projects');
 
   // ===== Finalizar cadastro =====
-  console.log('Clicando no botão "Finalizar cadastro"...');
+  console.log('Clicando no botão "Finalize"...');
   await Promise.all([
-    page.click('button[data-test-id="finish-registration"]'),
+    page.getByRole('button', { name: 'Finalize' }).click(),
     page.waitForLoadState('networkidle'),
   ]);
 
