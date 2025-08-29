@@ -9,7 +9,60 @@ docker compose up -d
 docker compose logs -f
 ```
 
-## 
+## /home/ticket/docker-compose.yml
+
+```
+version: "3.9"
+services:
+  ticket:
+    build: .
+    container_name: ticket
+    ports:
+      - "8002:80"
+    restart: unless-stopped
+```
+
+## /home/ticket/Dockerfile
+
+```
+FROM node:18-alpine
+
+# Diretório de trabalho dentro do container
+WORKDIR /app
+
+# Instalar dependências
+COPY backend/package.json .
+RUN npm install
+
+# Copiar backend
+COPY backend/index.js ./index.js
+
+# Copiar site estático
+COPY site /usr/share/nginx/html
+
+# Expor porta HTTP
+EXPOSE 80
+
+# Rodar API
+CMD ["node", "index.js"]
+```
+
+## /home/ticket/backend/package.json
+
+```
+{
+  "name": "ticket-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  }
+}
+```
+
+##  /home/ticket/backend/index.js
 
 ```
 import express from "express";
@@ -111,7 +164,7 @@ app.post("/api/criar-atividade", async (req, res) => {
 app.listen(80, () => console.log("Backend rodando em http://localhost:80"));
 ```
 
-## 
+## /home/ticket/site/index.html
 
 ```
 <!DOCTYPE html>
@@ -142,19 +195,19 @@ app.listen(80, () => console.log("Backend rodando em http://localhost:80"));
     <h1>Criar Atividade</h1>
 
     <form id="form-atividade">
-      <label for="title">Título *</label>
+      <label for="title">Descrição:</label>
       <input id="title" name="title" type="text" required />
 
-      <label for="custom3">Descrição 1</label>
+      <label for="custom3">Qual o processo que você segue hoje(Com ou sem o Artia)?</label>
       <input id="custom3" name="custom3" type="text" />
 
-      <label for="custom4">Descrição 2</label>
+      <label for="custom4">Qual e o problema que será resolvido?</label>
       <input id="custom4" name="custom4" type="text" />
 
-      <label for="custom5">Descrição 3</label>
+      <label for="custom5">Qual o impacto que essa situação a ser resolvida causa atualmente em sua operação?</label>
       <input id="custom5" name="custom5" type="text" />
 
-      <label for="custom6">Descrição 4</label>
+      <label for="custom6">Qual a solução proposta?</label>
       <input id="custom6" name="custom6" type="text" />
 
       <label for="custom7">Grupo Funcional *</label>
