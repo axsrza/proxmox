@@ -2,11 +2,14 @@
 ## 
 
 ```
-cd /home/ticket
-docker compose down
-docker compose build --no-cache
-docker compose up -d
-docker compose logs -f
+/home/ticket/
+├── Dockerfile
+├── backend
+│   ├── index.js
+│   └── package.json
+├── docker-compose.yml
+└── site
+    └── index.html
 ```
 
 ## /home/ticket/docker-compose.yml
@@ -277,3 +280,11 @@ app.listen(80, () => console.log("Backend rodando em http://localhost:80"));
 ```
 
 ## 
+
+```
+cd /home/ticket
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+docker compose logs -f
+```
